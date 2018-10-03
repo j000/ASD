@@ -74,7 +74,7 @@ tar:
 .PHONY: check
 check:
 	@clang-tidy \
-		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters' \
+		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters,-readability-braces-around-statements,-readability-named-parameter' \
 		-config="{CheckOptions: [ \
 			{ key: readability-identifier-naming.NamespaceCase, value: CamelCase }, \
 			{ key: readability-identifier-naming.ClassCase, value: CamelCase  }, \
