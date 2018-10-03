@@ -69,7 +69,7 @@ clean:
 tar:
 # poprawka na błąd 'file changed as we read it'
 	[ -f $(tar) ] || touch $(tar)
-	tar -caf ./$(tar) --exclude=$(tar) --exclude=*.x --exclude=.* --exclude=lib* -C .. $(zestaw)
+	tar -caf ./$(tar) --exclude-from=../.gitignore --exclude-from=../.git/info/exclude -C .. $(zestaw)
 
 .PHONY: check
 check:
