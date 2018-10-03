@@ -5,11 +5,13 @@
 template <class Iterator>
 inline void my_sort(Iterator begin, Iterator end)
 {
-	std::vector<int> histogram(*begin + 1);
+	typedef decltype(*begin + 1) Base;
+	std::vector<Base> histogram(*begin + 1);
 
 	for (auto i = begin; i != end; ++i) {
-		if (histogram.capacity() < (*i + 1)) { // comparing int and unsigned
-			auto old_size = histogram.capacity();
+		// if (histogram.capacity() < (*i + 1)) { // comparing int and unsigned
+		auto old_size = histogram.capacity();
+		if (old_size < static_cast<decltype(old_size)>(*i + 1)) {
 			auto new_size = *i + 1;
 			histogram.reserve(new_size);
 			histogram.insert(histogram.end(), new_size - old_size, 0);
@@ -24,7 +26,7 @@ inline void my_sort(Iterator begin, Iterator end)
 		total += old_count;
 	}
 
-	std::vector<int> output(end - begin);
+	std::vector<Base> output(end - begin);
 	for (auto i = begin; i != end; ++i) {
 		output[histogram[*i]] = *i;
 		histogram[*i] += 1;
