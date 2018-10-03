@@ -13,7 +13,7 @@ AlwaysBreakAfterReturnType: None
 # BreakBeforeBraces: Attach
 BreakBeforeBraces: WebKit
 AllowShortFunctionsOnASingleLine: InlineOnly
-SortIncludes: false
+# SortIncludes: false
 AlignTrailingComments: false
 # AlignAfterOpenBracket: AlwaysBreak
 AlignAfterOpenBracket: DontAlign
@@ -33,4 +33,5 @@ ConstructorInitializerAllOnOneLineOrOnePerLine: true
 Cpp11BracedListStyle: true
 AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 4
+AlwaysBreakTemplateDeclarations: true
 ...
