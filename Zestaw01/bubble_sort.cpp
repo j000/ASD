@@ -6,10 +6,10 @@
 template <class Iterator>
 inline void my_sort(Iterator begin, Iterator end)
 {
-	for (;begin != end; ++begin)
+	for (; begin != end; ++begin)
 		for (auto j = end - 1; j != begin; --j) {
-			if (*(j-1) > *j)
-				std::iter_swap(j-1, j);
+			if (*(j - 1) > *j)
+				std::iter_swap(j - 1, j);
 		}
 }
 
