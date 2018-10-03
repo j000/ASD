@@ -26,7 +26,7 @@ else
 endif
 # PIC > PIE > no-pie
 CFLAGS += -fPIC
-LDFLAGS += -fPIC -pie
+LDFLAGS += -pie
 # ścieżka do bibliotek
 LDLIBS += -Wl,-R.
 # link time optimization
@@ -92,7 +92,6 @@ format:
 	@clang-format -i -style=file $(FILES) $(HELPERS)
 
 # kopia wbudowanej reguły, z nowym rozszerzeniem
-%.x: private LDFLAGS += -fPIC -pie
 %.x: %.o
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
