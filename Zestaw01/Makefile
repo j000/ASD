@@ -1,0 +1,110 @@
+# Jarosław Rymut
+SHELL := /bin/sh
+
+# pliki
+# HELPERS nie tworzą plików wykonywalnych
+HELPERS :=
+FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
+
+####################
+
+# numer zestawu
+zestaw := $(notdir $(lastword $(CURDIR)))
+# nazwa spakowanego pliku
+tar := Rymut_$(zestaw).tar.gz
+
+####################
+
+# flagi
+CFLAGS := -O3 -Wall -Wextra
+# wiatmy w 2012
+# -Wpedantic dostępne od gcc 4.8
+ifeq ($(shell $(CC) -dumpversion),4.7)
+	CFLAGS += -pedantic
+else
+	CFLAGS += -Wpedantic
+endif
+# PIC > PIE > no-pie
+CFLAGS += -fPIC
+LDFLAGS += -fPIC -pie
+# ścieżka do bibliotek
+LDLIBS += -Wl,-R.
+# link time optimization
+CFLAGS += -flto
+# standardy
+CXXFLAGS := -std=c++11 $(CFLAGS)
+CFLAGS += -std=c99
+
+####################
+
+# private jest dostępne od GNU make 3.82
+ifneq (3.82,$(firstword $(sort $(MAKE_VERSION) 3.82)))
+  $(error "*** PLEASE USE AT LEAST GNU MAKE 3.82 FROM 2010 ***")
+endif
+
+####################
+
+# domyślny cel
+.PHONY: all
+all: $(FILES:.cpp=.x)
+
+####################
+
+# make może automatycznie usunąć te pliki
+.INTERMEDIATE: $(HELPERS:.cpp=.o) $(FILES:.cpp=.o)
+
+####################
+
+# wszystko zależy od Makefile
+$(FILES:.cpp=.o): Makefile
+$(HELPERS:.cpp=.o): Makefile
+
+####################
+
+.PHONY: clean
+clean:
+	-$(RM) $(FILES:.cpp=.x) $(tar) lib*
+
+.PHONY: tar
+tar:
+# poprawka na błąd 'file changed as we read it'
+	[ -f $(tar) ] || touch $(tar)
+	tar -caf ./$(tar) --exclude=$(tar) --exclude=*.x --exclude=.* --exclude=lib* -C .. $(zestaw)
+
+.PHONY: check
+check:
+	@clang-tidy \
+		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters' \
+		-config="{CheckOptions: [ \
+			{ key: readability-identifier-naming.NamespaceCase, value: CamelCase }, \
+			{ key: readability-identifier-naming.ClassCase, value: CamelCase  }, \
+			{ key: readability-identifier-naming.StructCase, value: CamelCase  }, \
+			{ key: readability-identifier-naming.FunctionCase, value: lower_case }, \
+			{ key: readability-identifier-naming.VariableCase, value: lower_case }, \
+			{ key: readability-identifier-naming.GlobalConstantCase, value: UPPER_CASE } \
+		]}" \
+		$(FILES) $(HELPERS) \
+		-- $(filter-out -flto,$(CXXFLAGS))
+# lto does something bad to clang-tidy
+
+.PHONY: format
+format:
+	@clang-format -i -style=file $(FILES) $(HELPERS)
+
+# kopia wbudowanej reguły, z nowym rozszerzeniem
+%.x: private LDFLAGS += -fPIC -pie
+%.x: %.o
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+lib%.so: private LDFLAGS += -shared
+lib%.so: %.o
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+####################
+
+# wszystko potrzebuje biblioteki
+# $(FILES:.cpp=.x): private LDLIBS += -L. -l#####
+
+# wszystko zależy od nagłówka i biblioteki
+# $(FILES:.cpp=.o): #####.hpp | lib####.so
+
