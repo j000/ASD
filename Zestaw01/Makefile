@@ -7,14 +7,20 @@ HELPERS :=
 FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 
 ####################
+# zależności
 
+# wszystko potrzebuje biblioteki
+# $(FILES:.cpp=.x): private LDLIBS += -L. -l#####
+# wszystko zależy od nagłówka i biblioteki
+# $(FILES:.cpp=.o): #####.hpp | lib####.so
+
+####################
 # numer zestawu
 zestaw := $(notdir $(lastword $(CURDIR)))
 # nazwa spakowanego pliku
 tar := Rymut_$(zestaw).tar.gz
 
 ####################
-
 # flagi
 CFLAGS := -O3 -Wall -Wextra
 # wiatmy w 2012
@@ -33,37 +39,31 @@ LDLIBS += -Wl,-R.
 CFLAGS += -flto
 # standardy
 CXXFLAGS := -std=c++11 $(CFLAGS)
-CFLAGS += -std=c99
+CFLAGS += -std=c11
 
 ####################
-
 # private jest dostępne od GNU make 3.82
 ifneq (3.82,$(firstword $(sort $(MAKE_VERSION) 3.82)))
   $(error "*** PLEASE USE AT LEAST GNU MAKE 3.82 FROM 2010 ***")
 endif
 
 ####################
-
-# domyślny cel
-.PHONY: all
-all: $(FILES:.cpp=.x)
-
-####################
+# wszystko zależy od Makefile
+$(FILES:.cpp=.o): Makefile
+$(HELPERS:.cpp=.o): Makefile
 
 # make może automatycznie usunąć te pliki
 .INTERMEDIATE: $(HELPERS:.cpp=.o) $(FILES:.cpp=.o)
 
 ####################
-
-# wszystko zależy od Makefile
-$(FILES:.cpp=.o): Makefile
-$(HELPERS:.cpp=.o): Makefile
-
-####################
+# domyślne cele
+.DEFAULT_GOAL := all
+.PHONY: all
+all: $(FILES:.cpp=.x)
 
 .PHONY: clean
 clean:
-	-$(RM) $(FILES:.cpp=.x) $(tar) lib*
+	$(RM) $(FILES:.cpp=.x) $(tar) lib*
 
 .PHONY: tar
 tar:
@@ -71,6 +71,16 @@ tar:
 	[ -f $(tar) ] || touch $(tar)
 	tar -caf ./$(tar) --exclude-from=../.gitignore --exclude-from=../.git/info/exclude -C .. $(zestaw)
 
+# kopia wbudowanej reguły, z nowym rozszerzeniem
+%.x: %.o
+	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+lib%.so: private LDFLAGS += -shared
+lib%.so: %.o
+	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+####################
+# inne cele
 .PHONY: check
 check:
 	@clang-tidy \
@@ -90,20 +100,4 @@ check:
 .PHONY: format
 format:
 	@clang-format -i -style=file $(FILES) $(HELPERS)
-
-# kopia wbudowanej reguły, z nowym rozszerzeniem
-%.x: %.o
-	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
-
-lib%.so: private LDFLAGS += -shared
-lib%.so: %.o
-	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
-
-####################
-
-# wszystko potrzebuje biblioteki
-# $(FILES:.cpp=.x): private LDLIBS += -L. -l#####
-
-# wszystko zależy od nagłówka i biblioteki
-# $(FILES:.cpp=.o): #####.hpp | lib####.so
 
