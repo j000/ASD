@@ -8,6 +8,7 @@ FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 
 ####################
 # zależności
+stack.o: stack.hpp
 
 # wszystko potrzebuje biblioteki
 # $(FILES:.cpp=.x): private LDLIBS += -L. -l#####
@@ -17,8 +18,9 @@ FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 ####################
 # testy
 N := 300
-TESTS :=
+TESTS := stack
 # zależność od generatora
+test.stdstack.txt test.stack.txt: test.genList.txt
 
 ####################
 # numer zestawu
