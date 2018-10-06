@@ -41,7 +41,7 @@ T& Stack<T, N>::top()
 {
 	if (m_empty == 0)
 		throw std::out_of_range("Stack is empty");
-	return &m_vector[m_empty - 1];
+	return m_vector[m_empty - 1];
 }
 
 template <typename T, std::size_t N>

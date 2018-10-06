@@ -6,7 +6,6 @@
 int main(int, char**)
 {
 	std::ios_base::sync_with_stdio(false);
-	std::cout << "Hello, world!" << std::endl;
 
 	Stack<int, 1000000> stack;
 
