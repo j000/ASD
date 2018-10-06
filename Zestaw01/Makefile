@@ -46,7 +46,7 @@ LDLIBS += -Wl,-R.
 # link time optimization
 CFLAGS += -flto
 # standardy
-CXXFLAGS := -std=c++11 $(CFLAGS)
+CXXFLAGS := -std=c++14 $(CFLAGS)
 CFLAGS += -std=c11
 
 ####################
@@ -118,7 +118,9 @@ format:
 gen%.x: gen%.cxx
 	g++ -std=c++11 -O2 -o $@ $^
 
-test.gen%.txt: gen%.x
+.PHONY: .FORCE
+.FORCE:
+test.gen%.txt: gen%.x #.FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x

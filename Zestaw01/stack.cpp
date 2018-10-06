@@ -7,7 +7,7 @@ int main(int, char**)
 {
 	std::ios_base::sync_with_stdio(false);
 
-	Stack<int, 1000000> stack;
+	Stack<int, 1'000'000> stack; // C++14
 
 	int n;
 	std::cin >> n;
