@@ -1,3 +1,6 @@
+// Copyright (C) 2018 Jarosław Rymut
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see <https://www.gnu.org/licenses/>
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 
