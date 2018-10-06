@@ -81,7 +81,7 @@ mostlyclean:
 tar:
 # poprawka na błąd 'file changed as we read it'
 	[ -f $(tar) ] || touch $(tar)
-	tar -caf ./$(tar) --exclude-from=../.gitignore --exclude-from=../.git/info/exclude -C .. $(zestaw)
+	tar -caf ./$(tar) --exclude=*.o --exclude=*.x --exclude=*.tar.* --exclude=test.*.txt -C .. $(zestaw)
 
 # kopia wbudowanej reguły, z nowym rozszerzeniem
 %.x: %.o
