@@ -6,4 +6,4 @@
 *.tar
 *.tar.*
 # pliki pomocnicze
-*.txt
+test.*.txt

@@ -15,6 +15,12 @@ FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 # $(FILES:.cpp=.o): #####.hpp | lib####.so
 
 ####################
+# testy
+N := 300
+TESTS :=
+# zależność od generatora
+
+####################
 # numer zestawu
 zestaw := $(notdir $(lastword $(CURDIR)))
 # nazwa spakowanego pliku
@@ -62,8 +68,12 @@ $(HELPERS:.cpp=.o): Makefile
 all: $(FILES:.cpp=.x)
 
 .PHONY: clean
-clean:
+clean: mostlyclean
 	$(RM) $(FILES:.cpp=.x) $(tar) lib*
+
+.PHONY: mostlyclean
+mostlyclean:
+	$(RM) test.*.txt gen*.x
 
 .PHONY: tar
 tar:
@@ -101,3 +111,21 @@ check:
 format:
 	@clang-format -i -style=file $(FILES) $(HELPERS)
 
+####################
+# testy
+gen%.x: gen%.cxx
+	g++ -std=c++11 -O2 -o $@ $^
+
+test.gen%.txt: gen%.x
+	./$(filter %.x,$^) $(N) >$@
+
+test.%.txt: %.x
+	./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+
+TESTS_TARGETS := $(addprefix test_,$(TESTS))
+.PHONY: $(TESTS_TARGETS)
+$(TESTS_TARGETS): test_%: test.%.txt test.std%.txt
+	@diff -sq $^
+
+.PHONY: test
+test: $(TESTS_TARGETS)
