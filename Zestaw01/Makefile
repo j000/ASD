@@ -34,7 +34,7 @@ tar := Rymut_$(zestaw).tar.gz
 
 ####################
 # flagi
-CFLAGS := -O3 -Wall -Wextra
+CFLAGS := -O3 -Wall -Wextra -Weffc++
 # wiatmy w 2012
 # -Wpedantic dostępne od gcc 4.8
 ifeq ($(shell $(CC) -dumpversion),4.7)
@@ -100,7 +100,7 @@ lib%.so: %.o
 .PHONY: check
 check:
 	@clang-tidy \
-		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters,-readability-braces-around-statements,-readability-named-parameter' \
+		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters,-readability-braces-around-statements,-readability-named-parameter,-readability-implicit-bool-conversion,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
 		-config="{CheckOptions: [ \
 			{ key: readability-identifier-naming.NamespaceCase, value: CamelCase }, \
 			{ key: readability-identifier-naming.ClassCase, value: CamelCase  }, \
