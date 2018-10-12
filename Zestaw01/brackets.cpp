@@ -83,10 +83,10 @@ class ExpressionTree {
 	};
 
 public:
-	ExpressionTree(size_t pairs = 1)
+	ExpressionTree(size_t pairs = 1) noexcept
 	{
 		if (pairs == 0)
-			throw std::invalid_argument("Can't create empty expression");
+			pairs = std::floor(get_random() * 10000);
 
 		for (decltype(pairs) i = 0; i < pairs; ++i) {
 			m_tree.emplace_back();
@@ -94,7 +94,8 @@ public:
 		}
 	}
 
-	// rule of six...
+	// the rule of six...
+	ExpressionTree() = delete;
 	~ExpressionTree() = default;
 	ExpressionTree(const ExpressionTree&) = default;
 	ExpressionTree& operator=(const ExpressionTree&) = default;
