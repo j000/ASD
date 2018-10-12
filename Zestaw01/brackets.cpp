@@ -115,7 +115,6 @@ public:
 	std::string to_string()
 	{
 		// FIXME change to stack-based implementation
-		// std::stack<size_t> stack;
 		std::string output {};
 		output += m_tree[0].open();
 		output += print_helper(m_tree[0].m_children);

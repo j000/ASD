@@ -122,9 +122,7 @@ format:
 gen%.x: gen%.cxx
 	g++ -std=c++11 -O2 -o $@ $^
 
-.PHONY: .FORCE
-.FORCE:
-test.gen%.txt: gen%.x #.FORCE
+test.gen%.txt: gen%.x
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
