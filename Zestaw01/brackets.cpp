@@ -29,6 +29,29 @@ double get_random()
 	return distribution(generator);
 }
 
+class ErrorGenerator {
+public:
+	bool check()
+	{
+		m_current += m_probability;
+		if (m_max_errors && get_random() < m_current) {
+			m_current = 0;
+			--m_max_errors;
+			return true;
+		}
+		return false;
+	}
+	ErrorGenerator(double probability, unsigned max_errors = 1)
+		: m_probability(probability), m_max_errors(max_errors)
+	{
+	}
+
+private:
+	double m_probability {0.1};
+	double m_current {0};
+	unsigned m_max_errors {1};
+};
+
 class ExpressionTree {
 	enum class Bracket : char { Round, Square };
 
@@ -83,7 +106,8 @@ class ExpressionTree {
 	};
 
 public:
-	ExpressionTree(size_t pairs = 1) noexcept
+	ExpressionTree(size_t pairs = 1, unsigned errors = 0) noexcept
+		: m_error {0.5 * errors / (pairs - 1), errors}
 	{
 		if (pairs == 0)
 			pairs = std::floor(get_random() * 10000);
@@ -132,6 +156,7 @@ public:
 
 private:
 	std::vector<ExpressionTreeNode> m_tree {};
+	ErrorGenerator m_error;
 
 	std::string print_helper(size_t node)
 	{
@@ -139,9 +164,11 @@ private:
 			return std::string {};
 
 		std::string out {};
-		out += m_tree[node].open();
+		if (!m_error.check())
+			out += m_tree[node].open();
 		out += print_helper(m_tree[node].m_children);
-		out += m_tree[node].close();
+		// if (!m_error.check())
+			out += m_tree[node].close();
 		return out += print_helper(m_tree[node].m_sibling);
 	}
 
@@ -174,6 +201,6 @@ int main(int argc, char** argv)
 	if (argc == 3)
 		errors = std::stoul(argv[2]);
 
-	ExpressionTree tree {pairs};
+	ExpressionTree tree {pairs, errors};
 	std::cout << tree << std::endl;
 }
