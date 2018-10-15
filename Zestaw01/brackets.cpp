@@ -70,7 +70,7 @@ class ExpressionTree {
 			m_bracket = bracket;
 		}
 
-		// the rule of six...
+		// the rule of five...
 		~ExpressionTreeNode() = default;
 		ExpressionTreeNode(const ExpressionTreeNode&) = default;
 		ExpressionTreeNode& operator=(const ExpressionTreeNode&) = default;
@@ -118,7 +118,7 @@ public:
 		}
 	}
 
-	// the rule of six...
+	// the rule of five...
 	ExpressionTree() = delete;
 	~ExpressionTree() = default;
 	ExpressionTree(const ExpressionTree&) = default;
