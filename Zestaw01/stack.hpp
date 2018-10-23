@@ -19,7 +19,7 @@ public:
 
 private:
 	std::size_t m_empty {0};
-	T m_vector[N];
+	T m_vector[N] {};
 	// std::array<T, N> m_vector;
 };
 
