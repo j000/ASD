@@ -24,10 +24,17 @@ CursorList.o: CursorList.hpp
 N := 350
 # zależność od generatora
 test.stdList.txt: test.genList.txt
+test.ArrayList.txt: test.genList.txt
 test.stdVector.txt: test.genList.txt
 # plik do porównania
 test_stdList: test.stdVector.txt
 test: test_stdList
+
+test_ArrayList: test.stdList.txt
+test: test_ArrayList
+
+test_stdVector: test.ArrayList.txt
+test: test_stdVector
 
 ####################
 # numer zestawu
