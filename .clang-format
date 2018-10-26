@@ -23,15 +23,24 @@ ObjCBlockIndentWidth: 4
 IndentCaseLabels: false
 SpaceAfterTemplateKeyword: true
 PenaltyReturnTypeOnItsOwnLine: 60
----
-Language: Cpp
 # BreakConstructorInitializers: AfterColon
 BreakConstructorInitializers: BeforeComma
 BreakBeforeBinaryOperators: All
 BreakBeforeInheritanceComma: false
+BreakInheritanceList: BeforeComma
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 Cpp11BracedListStyle: true
+SpaceBeforeCpp11BracedList: false
 AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 4
 AlwaysBreakTemplateDeclarations: true
+AlignEscapedNewlines: Left
+BinPackArguments: false
+BinPackParameters: false
+AlignAfterOpenBracket: AlwaysBreak
+---
+Language: Java
+ReflowComments: false
+AllowShortFunctionsOnASingleLine: None
+BreakAfterJavaFieldAnnotations: true
 ...

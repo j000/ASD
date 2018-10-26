@@ -24,8 +24,8 @@ void usage(char* name)
 
 double get_random()
 {
-	thread_local static std::mt19937 generator {std::random_device {}()};
-	thread_local static std::uniform_real_distribution<> distribution {0., 1.};
+	thread_local static std::mt19937 generator{std::random_device{}()};
+	thread_local static std::uniform_real_distribution<> distribution{0., 1.};
 	return distribution(generator);
 }
 
@@ -47,9 +47,9 @@ public:
 	}
 
 private:
-	double m_probability {0.1};
-	double m_current {0};
-	unsigned m_max_errors {1};
+	double m_probability{0.1};
+	double m_current{0};
+	unsigned m_max_errors{1};
 };
 
 class ExpressionTree {
@@ -101,13 +101,13 @@ class ExpressionTree {
 
 	private:
 		enum Bracket m_bracket { Bracket::Round };
-		size_t m_children {};
-		size_t m_sibling {};
+		size_t m_children{};
+		size_t m_sibling{};
 	};
 
 public:
 	ExpressionTree(size_t pairs = 1, unsigned errors = 0) noexcept
-		: m_error {0.5 * errors / (pairs - 1), errors}
+		: m_error{0.5 * errors / (pairs - 1), errors}
 	{
 		if (pairs == 0)
 			pairs = std::floor(get_random() * 10000);
@@ -139,7 +139,7 @@ public:
 	std::string to_string()
 	{
 		// FIXME change to stack-based implementation
-		std::string output {};
+		std::string output{};
 		output += m_tree[0].open();
 		output += print_helper(m_tree[0].m_children);
 		output += m_tree[0].close();
@@ -155,15 +155,15 @@ public:
 	}
 
 private:
-	std::vector<ExpressionTreeNode> m_tree {};
+	std::vector<ExpressionTreeNode> m_tree{};
 	ErrorGenerator m_error;
 
 	std::string print_helper(size_t node)
 	{
 		if (!node)
-			return std::string {};
+			return std::string{};
 
-		std::string out {};
+		std::string out{};
 		if (!m_error.check())
 			out += m_tree[node].open();
 		out += print_helper(m_tree[node].m_children);
@@ -201,6 +201,6 @@ int main(int argc, char** argv)
 	if (argc == 3)
 		errors = std::stoul(argv[2]);
 
-	ExpressionTree tree {pairs, errors};
+	ExpressionTree tree{pairs, errors};
 	std::cout << tree << std::endl;
 }
