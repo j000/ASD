@@ -159,7 +159,7 @@ test_%: test.%.txt
 
 ####################
 # rapidcheck
-ifneq (,$(wildcard ../rapidcheck))
+ifneq (,$(wildcard ../rapidcheck/CMakeLists.txt))
 
 .PHONY: rapidcheck
 rapidcheck: rapidcheck.x
