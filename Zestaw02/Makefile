@@ -23,6 +23,7 @@ CursorList.o: CursorList.hpp
 # testy
 N := 350
 # zależność od generatora
+test.stdList.txt: test.genList.txt
 
 ####################
 # numer zestawu
