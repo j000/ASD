@@ -21,10 +21,18 @@ queue.o: queue.hpp
 ####################
 # testy
 N := 300
-TESTS := stack queue
 # zależność od generatora
-test.stdstack.txt test.stack.txt: test.genList.txt
-test.stdqueue.txt test.queue.txt: test.genList.txt
+test.stack.txt: test.genList.txt
+test.stdstack.txt: test.genList.txt
+test.queue.txt: test.genList.txt
+test.stdqueue.txt: test.genList.txt
+
+# plik do porównania
+test_stack: test.stdstack.txt
+test: test_stack
+
+test_queue: test.stdqueue.txt
+test: test_queue
 
 ####################
 # numer zestawu
@@ -34,7 +42,7 @@ tar := Rymut_$(zestaw).tar.gz
 
 ####################
 # flagi
-CFLAGS := -O3 -Wall -Wextra -Weffc++
+CFLAGS := -O3 -pipe -Wall -Wextra -Weffc++
 # wiatmy w 2012
 # -Wpedantic dostępne od gcc 4.8
 ifeq ($(shell $(CC) -dumpversion),4.7)
@@ -44,6 +52,7 @@ else
 endif
 # PIC > PIE > no-pie
 CFLAGS += -fPIC
+# and for linker:
 LDFLAGS += -pie
 # ścieżka do bibliotek
 LDLIBS += -Wl,-R.
@@ -95,12 +104,33 @@ lib%.so: private LDFLAGS += -shared
 lib%.so: %.o
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
+# usuń
+%: %.o
+%: %.cpp
+.SUFFIXES:
+.SUFFIXES: .o .cpp
+
 ####################
 # inne cele
 .PHONY: check
 check:
 	@clang-tidy \
-		-checks='bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-unused-parameters,-readability-braces-around-statements,-readability-named-parameter,-readability-implicit-bool-conversion,-cppcoreguidelines-pro-bounds-pointer-arithmetic' \
+		-checks="bugprone-*,\
+	cppcoreguidelines-*,\
+	clang-analyzer-*,\
+	misc-*,\
+	modernize-*,\
+	performance-*,\
+	portability-*,\
+	readability-*,\
+	-misc-unused-parameters,\
+	-readability-braces-around-statements,\
+	-readability-named-parameter,\
+	-readability-implicit-bool-conversion,\
+	-cppcoreguidelines-no-malloc,\
+	-cppcoreguidelines-owning-memory,\
+	-cppcoreguidelines-pro-bounds-*"\
+		-header-filter='.*' \
 		-config="{CheckOptions: [ \
 			{ key: readability-identifier-naming.NamespaceCase, value: CamelCase }, \
 			{ key: readability-identifier-naming.ClassCase, value: CamelCase  }, \
@@ -119,19 +149,20 @@ format:
 
 ####################
 # testy
+.PHONY: test
+test:
+	@printf "[32mAll tests are successfull![0m\n"
+
 gen%.x: gen%.cxx
 	g++ -std=c++11 -O2 -o $@ $^
 
-test.gen%.txt: gen%.x
+FORCE:
+test.gen%.txt: gen%.x FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
-	./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+	time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
 
-TESTS_TARGETS := $(addprefix test_,$(TESTS))
-.PHONY: $(TESTS_TARGETS)
-$(TESTS_TARGETS): test_%: test.%.txt test.std%.txt
+test_%: test.%.txt
 	@diff -sq $^
 
-.PHONY: test
-test: $(TESTS_TARGETS)
