@@ -168,7 +168,7 @@ test.gen%.txt: gen%.x FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
-	time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+	/usr/bin/time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
 
 test_%: test.%.txt
 	@diff -sq $^
