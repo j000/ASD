@@ -10,9 +10,6 @@ FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 
 ####################
 # zależności
-stack.o: stack.hpp
-queue.o: queue.hpp
-
 # wszystko potrzebuje biblioteki
 # $(FILES:.cpp=.x): private LDLIBS += -L. -l#####
 # wszystko zależy od nagłówka i biblioteki
@@ -20,7 +17,7 @@ queue.o: queue.hpp
 
 ####################
 # testy
-N := 300
+N := 350
 # zależność od generatora
 test.stack.txt: test.genList.txt
 test.stdstack.txt: test.genList.txt
@@ -42,7 +39,7 @@ tar := Rymut_$(zestaw).tar.gz
 
 ####################
 # flagi
-CFLAGS := -O3 -pipe -Wall -Wextra -Weffc++
+CFLAGS := -O3 -pipe -Wall -Wextra -Weffc++ -Wconversion
 # wiatmy w 2012
 # -Wpedantic dostępne od gcc 4.8
 ifeq ($(shell $(CC) -dumpversion),4.7)
@@ -61,6 +58,8 @@ CFLAGS += -flto
 # standardy
 CXXFLAGS := -std=c++14 $(CFLAGS)
 CFLAGS += -std=c11
+
+CPPFLAGS := -MMD -MP
 
 ####################
 # private jest dostępne od GNU make 3.82
@@ -88,7 +87,7 @@ clean: mostlyclean
 
 .PHONY: mostlyclean
 mostlyclean:
-	$(RM) test.*.txt gen*.x
+	$(RM) test.*.txt gen*.x $(HELPERS:.cpp=.x) $(FILES:.cpp=.d) $(HELPERS:.cpp=.d)
 
 .PHONY: tar
 tar:
@@ -103,6 +102,13 @@ tar:
 lib%.so: private LDFLAGS += -shared
 lib%.so: %.o
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
+
+%.d: %.cpp
+	$(CXX) $(CPPFLAGS) -M $<
+
+ifneq (,$(wildcard $(FILES:.cpp=.d)))
+include $(FILES:.cpp=.d)
+endif
 
 # usuń
 %: %.o
@@ -139,7 +145,7 @@ check:
 			{ key: readability-identifier-naming.VariableCase, value: lower_case }, \
 			{ key: readability-identifier-naming.GlobalConstantCase, value: UPPER_CASE } \
 		]}" \
-		$(FILES) $(HELPERS) \
+		$(FILES) \
 		-- $(filter-out -flto,$(CXXFLAGS))
 # lto does something bad to clang-tidy
 
@@ -156,13 +162,35 @@ test:
 gen%.x: gen%.cxx
 	g++ -std=c++11 -O2 -o $@ $^
 
+.PHONY: FORCE
 FORCE:
 test.gen%.txt: gen%.x FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
-	time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+	/usr/bin/time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
 
 test_%: test.%.txt
 	@diff -sq $^
 
+####################
+# rapidcheck
+ifneq (,$(wildcard ../rapidcheck/CMakeLists.txt))
+
+.PHONY: rapidcheck
+rapidcheck: rapidcheck.x
+	./rapidcheck.x
+
+check: CXXFLAGS += -I../rapidcheck/include
+rapidcheck.x: CXXFLAGS += -I../rapidcheck/include
+rapidcheck.x: ../rapidcheck/build/librapidcheck.a
+test: rapidcheck
+
+../rapidcheck/build/librapidcheck.a: | ../rapidcheck/build/
+	cd ../rapidcheck/build && cmake ..
+	$(MAKE) --directory=../rapidcheck/build
+
+../rapidcheck/build/:
+	cd ../rapidcheck && mkdir build
+
+endif

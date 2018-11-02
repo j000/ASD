@@ -7,3 +7,5 @@
 *.tar.*
 # pliki pomocnicze
 test.*.txt
+# zależności
+*.d
