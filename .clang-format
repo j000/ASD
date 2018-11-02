@@ -12,7 +12,7 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 # BreakBeforeBraces: Attach
 BreakBeforeBraces: WebKit
-AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortFunctionsOnASingleLine: None
 # SortIncludes: false
 AlignTrailingComments: false
 # AlignAfterOpenBracket: AlwaysBreak

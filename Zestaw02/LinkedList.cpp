@@ -16,7 +16,7 @@ int main(int, char**)
 
 	LinkedList<int> list;
 
-	int n;
+	unsigned int n;
 	cin >> n;
 	while (n > 0) {
 		char command;

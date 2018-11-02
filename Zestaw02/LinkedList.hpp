@@ -25,14 +25,18 @@ public:
 
 private:
 	struct Node {
-		T value {};
-		Node* prev {};
-		Node* next {};
+		T value{};
+		Node* prev{};
+		Node* next{};
+
+		Node() = default;
+		Node(const T& copy) : value{copy} {}
+		Node(T&& move) : value{std::forward(move)} {}
 	};
 
-	Node* m_head {};
-	Node* m_tail {};
-	::std::size_t m_size {};
+	Node* m_head{};
+	Node* m_tail{};
+	::std::size_t m_size{};
 
 	friend class Tester;
 };
@@ -40,8 +44,7 @@ private:
 template <typename T>
 void LinkedList<T>::push_front(T&& move)
 {
-	Node* tmp = new Node();
-	tmp->value(::std::move(move));
+	Node* tmp = new Node(std::forward(move));
 	tmp->next = m_head;
 
 	if (m_head)
@@ -95,8 +98,7 @@ T LinkedList<T>::pop_front()
 template <typename T>
 void LinkedList<T>::push_back(T&& move)
 {
-	Node* tmp = new Node();
-	tmp->value(::std::move(move));
+	Node* tmp = new Node(std::forward(move));
 	tmp->prev = m_tail;
 
 	if (m_tail)
@@ -194,7 +196,7 @@ T* LinkedList<T>::insert(T*, T)
 template <typename T>
 int LinkedList<T>::size() const
 {
-	return m_size;
+	return static_cast<int>(m_size);
 }
 
 template <typename T>

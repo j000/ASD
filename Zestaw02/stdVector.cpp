@@ -17,7 +17,7 @@ int main(int, char**)
 	::std::vector<int> list;
 	list.reserve(8);
 
-	int n;
+	unsigned int n;
 	cin >> n;
 	while (n > 0) {
 		char command;

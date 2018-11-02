@@ -126,9 +126,15 @@ public:
 	ExpressionTree(ExpressionTree&&) = default;
 	ExpressionTree& operator=(ExpressionTree&&) = default;
 
-	ExpressionTreeNode* root() { return &m_tree[0]; }
+	ExpressionTreeNode* root()
+	{
+		return &m_tree[0];
+	}
 
-	auto size() { return m_tree.size(); }
+	auto size()
+	{
+		return m_tree.size();
+	}
 
 	friend std::ostream& operator<<(std::ostream& out, ExpressionTree& tree)
 	{
