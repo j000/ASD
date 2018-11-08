@@ -8,11 +8,11 @@
 
 int main(int, char**)
 {
-	using ::std::cin;
-	using ::std::cout;
-	using ::std::endl;
+	using std::cin;
+	using std::cout;
+	using std::endl;
 
-	::std::ios_base::sync_with_stdio(false);
+	std::ios_base::sync_with_stdio(false);
 
 	LinkedList<int> list;
 

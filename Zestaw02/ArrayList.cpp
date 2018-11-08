@@ -8,15 +8,15 @@
 
 int main(int, char**)
 {
-	using ::std::cin;
-	using ::std::cout;
-	using ::std::endl;
+	using std::cin;
+	using std::cout;
+	using std::endl;
 
-	::std::ios_base::sync_with_stdio(false);
+	std::ios_base::sync_with_stdio(false);
 
 	ArrayList<int> list;
 
-	int n;
+	unsigned int n;
 	cin >> n;
 	while (n > 0) {
 		char command;

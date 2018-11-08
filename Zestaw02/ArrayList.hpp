@@ -7,8 +7,7 @@
 #include <new>
 #include <stdexcept>
 
-using ::std::move;
-using ::std::size_t;
+using std::size_t;
 
 using position_t = size_t;
 
@@ -31,34 +30,31 @@ public:
 	inline int size() const noexcept;
 	inline bool empty() const noexcept;
 
-	// ArrayList();
+	ArrayList() = default;
 	~ArrayList();
-	// ArrayList(const ArrayList&);
-	// ArrayList& operator=(const ArrayList&);
-	// ArrayList(ArrayList&&) noexcept;
-	// ArrayList& operator=(ArrayList&&) noexcept;
+	ArrayList(const ArrayList&) = delete;
+	ArrayList& operator=(const ArrayList&) = delete;
+	ArrayList(ArrayList&&) noexcept = delete;
+	ArrayList& operator=(ArrayList&&) noexcept = delete;
 
 private:
-	size_t m_empty {0};
-	typename std::aligned_storage<sizeof(T), alignof(T)>::type m_bad_name[N] {};
-	T* m_array {reinterpret_cast<T*>(m_bad_name)};
+	size_t m_empty{0};
+	T* m_array{new T[N]};
 };
 
 template <typename T, size_t N>
 ArrayList<T, N>::~ArrayList()
 {
-	for (auto i = 0u; i != m_empty; ++i) {
-		(&m_array[i])->~T();
-	}
+	delete [] m_array;
 }
 
 template <typename T, size_t N>
 void ArrayList<T, N>::push_back(T&& x)
 {
 	if (m_empty == N)
-		throw ::std::out_of_range("List is full");
+		throw std::out_of_range("List is full");
 
-	new (&m_array[m_empty]) T {move(x)};
+	new (&m_array[m_empty]) T{std::forward(x)};
 	m_empty++;
 }
 
@@ -66,9 +62,9 @@ template <typename T, size_t N>
 void ArrayList<T, N>::push_back(const T& x)
 {
 	if (m_empty == N)
-		throw ::std::out_of_range {"List is full"};
+		throw std::out_of_range{"List is full"};
 
-	new (&m_array[m_empty]) T {x};
+	new (&m_array[m_empty]) T{x};
 	m_empty++;
 }
 
@@ -76,21 +72,21 @@ template <typename T, size_t N>
 T ArrayList<T, N>::pop_back()
 {
 	if (m_empty == 0)
-		throw ::std::out_of_range("List is empty");
+		throw std::out_of_range("List is empty");
 
 	--m_empty;
-	T out {move(m_array[m_empty])};
+	T out{std::move(m_array[m_empty])};
 	(&m_array[m_empty])->~T();
-	return move(out);
+	return out;
 }
 
 template <typename T, size_t N>
 void ArrayList<T, N>::push_front(T&& x)
 {
 	if (m_empty == N)
-		throw ::std::out_of_range("List is full");
+		throw std::out_of_range("List is full");
 
-	::std::memmove(m_array + 1, m_array, m_empty * sizeof(T));
+	std::memmove(m_array + 1, m_array, m_empty * sizeof(T));
 	++m_empty;
 	m_array[0] = move(x);
 }
@@ -99,9 +95,9 @@ template <typename T, size_t N>
 void ArrayList<T, N>::push_front(const T& x)
 {
 	if (m_empty == N)
-		throw ::std::out_of_range("List is full");
+		throw std::out_of_range("List is full");
 
-	::std::memmove(m_array + 1, m_array, m_empty * sizeof(T));
+	std::memmove(m_array + 1, m_array, m_empty * sizeof(T));
 	++m_empty;
 	new (&m_array[0]) T(x);
 }
@@ -110,30 +106,31 @@ template <typename T, size_t N>
 T ArrayList<T, N>::pop_front()
 {
 	if (m_empty == 0)
-		throw ::std::out_of_range("List is empty");
+		throw std::out_of_range("List is empty");
 
-	auto out(move(m_array[0]));
+	T out{std::move(m_array[0])};
 	--m_empty;
-	::std::memmove(m_array, m_array + 1, m_empty * sizeof(T));
-	return move(out);
+	std::memmove(m_array, m_array + 1, m_empty * sizeof(T));
+	return out;
 }
 
 template <typename T, size_t N>
 position_t ArrayList<T, N>::find(const T& x) const
 {
-	for (auto i = 0; i < size(); ++i)
+	for (position_t i = 0; i < m_empty; ++i)
 		if (x == m_array[i])
 			return i;
-	return size();
+
+	return m_empty;
 }
 
 template <typename T, size_t N>
 position_t ArrayList<T, N>::insert(const position_t pos, T&& x)
 {
-	if (pos < 0 || pos > size())
-		throw ::std::out_of_range("Position out of range");
+	if (pos < 0 || pos >= m_empty)
+		throw std::out_of_range("Position out of range");
 
-	::std::memmove(
+	std::memmove(
 		m_array + pos + 1, m_array + pos, (m_empty - pos) * sizeof(T));
 	++m_empty;
 	m_array[pos] = move(x);
@@ -144,10 +141,10 @@ position_t ArrayList<T, N>::insert(const position_t pos, T&& x)
 template <typename T, size_t N>
 position_t ArrayList<T, N>::insert(const position_t pos, const T& x)
 {
-	if (pos < 0 || pos > size())
-		throw ::std::out_of_range("Position out of range");
+	if (pos < 0 || pos >= m_empty)
+		throw std::out_of_range("Position out of range");
 
-	::std::memmove(
+	std::memmove(
 		m_array + pos + 1, m_array + pos, (m_empty - pos) * sizeof(T));
 	++m_empty;
 	// m_array[pos] = x;
@@ -159,7 +156,7 @@ position_t ArrayList<T, N>::insert(const position_t pos, const T& x)
 template <typename T, size_t N>
 int ArrayList<T, N>::size() const noexcept
 {
-	return m_empty;
+	return static_cast<int>(m_empty);
 }
 
 template <typename T, size_t N>

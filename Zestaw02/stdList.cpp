@@ -8,13 +8,13 @@
 
 int main(int, char**)
 {
-	using ::std::cin;
-	using ::std::cout;
-	using ::std::endl;
+	using std::cin;
+	using std::cout;
+	using std::endl;
 
-	::std::ios_base::sync_with_stdio(false);
+	std::ios_base::sync_with_stdio(false);
 
-	::std::list<int> list;
+	std::list<int> list;
 
 	unsigned int n;
 	cin >> n;
@@ -55,7 +55,7 @@ int main(int, char**)
 		case 'C': {
 			int number;
 			cin >> number;
-			if (::std::find(list.begin(), list.end(), number) != list.end()) {
+			if (std::find(list.begin(), list.end(), number) != list.end()) {
 				cout << "TRUE" << endl;
 			} else {
 				cout << "FALSE" << endl;

@@ -8,6 +8,8 @@
 template <typename T = int>
 class LinkedList {
 public:
+	~LinkedList();
+
 	void push_front(T&&);
 	void push_front(const T&);
 	T pop_front();
@@ -36,10 +38,21 @@ private:
 
 	Node* m_head{};
 	Node* m_tail{};
-	::std::size_t m_size{};
+	std::size_t m_size{};
 
 	friend class Tester;
 };
+
+template <typename T>
+LinkedList<T>::~LinkedList()
+{
+	Node* loop = m_head;
+	while (loop) {
+		Node* tmp = loop->next;
+		delete loop;
+		loop = tmp;
+	}
+}
 
 template <typename T>
 void LinkedList<T>::push_front(T&& move)
