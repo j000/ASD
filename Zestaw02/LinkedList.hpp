@@ -20,7 +20,7 @@ public:
 
 	T* find(T);
 	T* erase(T*);
-	T* insert(T*, T);
+	T* insert(T*, const T&);
 
 	inline int size() const;
 	inline bool empty() const;
@@ -33,7 +33,7 @@ private:
 
 		Node() = default;
 		Node(const T& copy) : value{copy} {}
-		Node(T&& move) : value{std::forward(move)} {}
+		Node(T&& move) : value{std::forward<T>(move)} {}
 	};
 
 	Node* m_head{};
@@ -57,7 +57,7 @@ LinkedList<T>::~LinkedList()
 template <typename T>
 void LinkedList<T>::push_front(T&& move)
 {
-	Node* tmp = new Node(std::forward(move));
+	Node* tmp = new Node(std::forward<T>(move));
 	tmp->next = m_head;
 
 	if (m_head)
@@ -101,9 +101,12 @@ T LinkedList<T>::pop_front()
 		m_tail = nullptr;
 
 	m_head = m_head->next;
+
 	if (m_head)
 		m_head->prev = nullptr;
-	T out(std::move(tmp->value));
+
+	T out = tmp->value;
+
 	delete tmp;
 	return out;
 }
@@ -111,7 +114,7 @@ T LinkedList<T>::pop_front()
 template <typename T>
 void LinkedList<T>::push_back(T&& move)
 {
-	Node* tmp = new Node(std::forward(move));
+	Node* tmp = new Node(std::forward<T>(move));
 	tmp->prev = m_tail;
 
 	if (m_tail)
@@ -121,6 +124,7 @@ void LinkedList<T>::push_back(T&& move)
 
 	if (!m_head)
 		m_head = tmp;
+
 	++m_size;
 }
 
@@ -138,6 +142,7 @@ void LinkedList<T>::push_back(const T& copy)
 
 	if (!m_head)
 		m_head = tmp;
+
 	++m_size;
 }
 
@@ -180,30 +185,34 @@ T* LinkedList<T>::erase(T* pos)
 	if (!pos)
 		return nullptr;
 
-	Node* tmp = static_cast<Node*>(pos);
-
-	Node* i = m_head;
-	while (i && i != tmp) {
-		i = i->next;
-	}
-	if (!i)
-		return nullptr;
-
-	i = i->next;
+	Node* tmp = reinterpret_cast<Node*>(pos);
 
 	if (tmp->prev)
 		tmp->prev->next = tmp->next;
 	if (tmp->next)
 		tmp->next->prev = tmp->prev;
 
+	Node* out = tmp->next;
 	delete tmp;
-	return i;
+	return out;
 }
 
 template <typename T>
-T* LinkedList<T>::insert(T*, T)
+T* LinkedList<T>::insert(T* pos, const T& value)
 {
-	return nullptr;
+	if (!pos)
+		return nullptr;
+
+	Node* tmp = reinterpret_cast<Node*>(pos);
+
+	Node* i = new Node(value);
+	i->next = tmp;
+	i->prev = tmp->prev;
+	tmp->prev = i;
+	if (i->prev)
+		i->prev->next = i;
+
+	return i;
 }
 
 template <typename T>

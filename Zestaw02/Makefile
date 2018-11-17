@@ -135,6 +135,7 @@ check:
 	performance-*,\
 	portability-*,\
 	readability-*,\
+	-clang-analyzer-cplusplus.NewDeleteLeaks,\
 	-misc-unused-parameters,\
 	-readability-braces-around-statements,\
 	-readability-named-parameter,\
@@ -183,12 +184,14 @@ test_%: test.%.txt
 # rapidcheck
 ifneq (,$(wildcard ../rapidcheck/CMakeLists.txt))
 
+RC_PARAMS:="max_success=10000"
+
 .PHONY: rapidcheck
 rapidcheck: rapidcheck.x
-	./rapidcheck.x
+	RC_PARAMS=${RC_PARAMS} ./rapidcheck.x
 
-check: CXXFLAGS += -I../rapidcheck/include
-rapidcheck.x: CXXFLAGS += -I../rapidcheck/include
+check: CXXFLAGS += -isystem ../rapidcheck/include
+rapidcheck.x: CXXFLAGS += -isystem ../rapidcheck/include
 rapidcheck.x: ../rapidcheck/build/librapidcheck.a
 test: rapidcheck
 
