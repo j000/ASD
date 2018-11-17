@@ -22,6 +22,7 @@ N := 350
 test.stdList.txt: test.genList.txt
 test.ArrayList.txt: test.genList.txt
 test.LinkedList.txt: test.genList.txt
+test.CursorList.txt: test.genList.txt
 test.stdVector.txt: test.genList.txt
 
 # plik do porównania
@@ -33,6 +34,9 @@ test: test_ArrayList
 
 test_LinkedList: test.stdList.txt
 test: test_LinkedList
+
+test_CursorList: test.stdList.txt
+test: test_CursorList
 
 test_stdVector: test.ArrayList.txt
 test: test_stdVector
