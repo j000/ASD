@@ -24,7 +24,7 @@ tar := Rymut_$(zestaw).tar.gz
 ####################
 # flagi
 CFLAGS := -O3 -pipe -Wall -Wextra -Weffc++ -Wconversion
-# wiatmy w 2012
+# witamy w 2012
 # -Wpedantic dostępne od gcc 4.8
 ifeq ($(shell $(CC) -dumpversion),4.7)
 	CFLAGS += -pedantic
