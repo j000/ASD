@@ -99,7 +99,10 @@ lib%.so: %.o
 	$(CXX) $(CPPFLAGS) -M $<
 
 ifneq (,$(wildcard $(FILES:.cpp=.d)))
-include $(FILES:.cpp=.d)
+-include $(wildcard $(FILES:.cpp=.d))
+endif
+ifneq (,$(wildcard $(HELPERS:.cpp=.d)))
+-include $(wildcard $(HELPERS:.cpp=.d))
 endif
 
 # usuń domyślne reguły
