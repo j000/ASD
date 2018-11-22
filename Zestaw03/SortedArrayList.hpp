@@ -8,21 +8,26 @@
 #include <iostream>
 
 template <typename T>
+class SortedArrayList;
+
+template <typename T>
+SortedArrayList<T> merge(const SortedArrayList<T>&, const SortedArrayList<T>&);
+
+template <typename T>
 class SortedArrayList {
 public:
 	std::size_t size() const;
 	bool empty() const;
-	void push(T x);
+	void push(T);
 	T pop();
-	T erase(int i);
-	int find(T x) const;
-	void remove(T x);
+	T erase(int);
+	int find(T) const;
+	void remove(T);
 	SortedArrayList& unique();
 	void print() const;
 
-	template <typename U>
-	friend SortedArrayList<U>
-	merge(const SortedArrayList<U>& a, const SortedArrayList<U>& b);
+	friend SortedArrayList<T>
+	merge<T>(const SortedArrayList<T>&, const SortedArrayList<T>&);
 
 private:
 	Vector<T> m_array{};
