@@ -14,6 +14,8 @@ test.mergeStdVector.txt: test.genList.txt
 test.uniqueStdVector.txt: test.genList.txt
 test.mergeStdList.txt: test.genList.txt
 test.uniqueStdList.txt: test.genList.txt
+test.mergeArrayList.txt: test.genList.txt
+test.uniqueArrayList.txt: test.genList.txt
 
 ####################
 # plik do porównania
@@ -22,3 +24,9 @@ test: test_mergeStdList
 
 test_uniqueStdList: test.uniqueStdVector.txt
 test: test_uniqueStdList
+
+test_mergeArrayList: test.mergeStdList.txt
+test: test_mergeArrayList
+
+test_uniqueArrayList: test.uniqueStdList.txt
+test: test_uniqueArrayList
