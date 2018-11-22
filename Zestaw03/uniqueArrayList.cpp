@@ -9,6 +9,7 @@ using std::endl;
 
 int main(int, char**)
 {
+	std::ios_base::sync_with_stdio(false);
 	std::size_t n{};
 	SortedArrayList<int> list1;
 	SortedArrayList<int> list2;
