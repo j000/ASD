@@ -7,7 +7,8 @@ SHELL := /bin/sh
 # HELPERS nie tworzą plików wykonywalnych
 CHECKS := $(wildcard *check.cpp)
 TESTS := $(wildcard *test.cpp)
-HELPERS := $(CHECKS) $(TESTS)
+GENERATORS := $(wildcard gen*.cpp)
+HELPERS := $(CHECKS) $(TESTS) $(GENERATORS)
 FILES := $(filter-out $(HELPERS),$(wildcard *.cpp))
 
 ####################
@@ -157,7 +158,7 @@ N := 350
 test:
 	@printf "[32mAll tests are successfull![0m\n"
 
-gen%.x: gen%.cxx
+%.x: %.cxx
 	g++ -std=c++11 -O2 -o $@ $^
 
 .PHONY: FORCE
@@ -166,7 +167,7 @@ test.gen%.txt: gen%.x FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
-	/usr/bin/time ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+	/usr/bin/time -f "%E (mem: %MKB, cpu: %P)" ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
 
 test_%: test.%.txt
 	@diff -sq $^
