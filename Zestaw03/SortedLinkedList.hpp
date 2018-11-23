@@ -17,7 +17,7 @@ class SortedLinkedList {
 public:
 	SortedLinkedList();
 	~SortedLinkedList();
-	SortedLinkedList(const SortedLinkedList&) = delete;
+	SortedLinkedList(const SortedLinkedList&);
 	SortedLinkedList& operator=(const SortedLinkedList&) = delete;
 	SortedLinkedList(SortedLinkedList&&) = default;
 	SortedLinkedList& operator=(SortedLinkedList&&) = default;
@@ -73,16 +73,16 @@ SortedLinkedList<T>::~SortedLinkedList()
 	delete m_tail;
 }
 
-// template <typename T>
-// SortedLinkedList<T>::SortedLinkedList(const SortedLinkedList& list)
-// 	: SortedLinkedList()
-// {
-// 	Node* i = list.m_head;
-// 	while (i != list.m_tail) {
-// 		push(i->val);
-// 		i = i->next;
-// 	}
-// }
+template <typename T>
+SortedLinkedList<T>::SortedLinkedList(const SortedLinkedList& list)
+	: SortedLinkedList()
+{
+	Node* i = list.m_head;
+	while (i != list.m_tail) {
+		push(i->val);
+		i = i->next;
+	}
+}
 
 template <typename T>
 std::size_t SortedLinkedList<T>::size() const
@@ -179,7 +179,18 @@ void SortedLinkedList<T>::remove(T x)
 template <typename T>
 SortedLinkedList<T>& SortedLinkedList<T>::unique()
 {
-	// TODO
+	auto i = m_head->next;
+	while (i && i != m_tail) {
+		if (i->prev->val == i->val) {
+			auto tmp = i->next;
+			i->prev->next = i->next;
+			i->next->prev = i->prev;
+			delete i;
+			i = tmp;
+		} else {
+			i = i->next;
+		}
+	}
 	return *this;
 }
 
