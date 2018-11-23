@@ -19,11 +19,11 @@ test.uniqueArrayList.txt: test.genList.txt
 
 ####################
 # plik do porównania
-test_mergeStdList: test.mergeStdVector.txt
-test: test_mergeStdList
+test_mergeStdVector: test.mergeStdList.txt
+test: test_mergeStdVector
 
-test_uniqueStdList: test.uniqueStdVector.txt
-test: test_uniqueStdList
+test_uniqueStdVector: test.uniqueStdList.txt
+test: test_uniqueStdVector
 
 test_mergeArrayList: test.mergeStdList.txt
 test: test_mergeArrayList
