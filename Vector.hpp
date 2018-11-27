@@ -131,7 +131,7 @@ public:
 	//       iterator emplace(const_iterator, Args&&...);
 	iterator insert(const_iterator, const T&);
 	iterator insert(const_iterator, T&&);
-	// TODO: iterator insert(const_iterator, size_type, const T&);
+	iterator insert(const_iterator, size_type, const T&);
 	// TODO: template <typename InputIterator>
 	//       iterator insert(const_iterator, InputIterator, InputIterator);
 	// TODO: iterator insert(const_iterator, std::initializer_list<T>);
@@ -160,14 +160,14 @@ public:
 
 private:
 	inline void _destroy() noexcept;
-	inline void _destroy(size_type start, size_type end) noexcept;
-	inline void _copy_internal(const_reference copy) noexcept(
+	inline void _destroy(size_type, size_type) noexcept;
+	inline void _copy_internal(const_reference) noexcept(
 		std::is_nothrow_copy_constructible<T>::value);
-	inline void _move_internal(T&& move) noexcept(
-		std::is_nothrow_move_constructible<T>::value);
-	inline void _resize_if_needed(size_type elems = 1);
-	inline void _reserve_internal(size_type capacity);
-	inline void _move_up_internal(size_type start);
+	inline void
+	_move_internal(T&&) noexcept(std::is_nothrow_move_constructible<T>::value);
+	inline void _resize_if_needed(size_type = 1);
+	inline void _reserve_internal(size_type);
+	inline void _move_up_internal(size_type, size_type = 1);
 
 	template <typename U = T>
 	inline std::enable_if_t<std::is_nothrow_move_constructible<U>::value>
@@ -194,8 +194,8 @@ private:
 public:
 	size_type m_capacity{0};
 	size_type m_empty{0};
-	std::unique_ptr<T[], Deleter> m_buffer{reinterpret_cast<T*>(
-		::operator new(m_capacity * sizeof(T)))};
+	std::unique_ptr<T[], Deleter> m_buffer{
+		reinterpret_cast<T*>(::operator new(m_capacity * sizeof(T)))};
 };
 
 template <typename T>
@@ -502,32 +502,30 @@ template <typename T>
 typename Vector<T>::iterator
 Vector<T>::insert(const_iterator pos, const T& copy)
 {
-	if (pos == end()) {
-		push_back(copy);
-		return end() - 1;
-	}
-
-	size_type start = static_cast<size_type>(pos - &m_buffer[0]);
-	_resize_if_needed();
-
-	_move_up_internal(start);
-	m_buffer[start] = copy;
-	return &m_buffer[start];
+	return insert(pos, 1, copy);
 }
 
 template <typename T>
 typename Vector<T>::iterator Vector<T>::insert(const_iterator pos, T&& move)
 {
-	if (pos == end()) {
-		push_back(std::move(move));
-		return end() - 1;
-	}
-
 	size_type start = static_cast<size_type>(pos - &m_buffer[0]);
 	_resize_if_needed();
 
 	_move_up_internal(start);
 	m_buffer[start] = std::move(move);
+	return &m_buffer[start];
+}
+
+template <typename T>
+typename Vector<T>::iterator
+Vector<T>::insert(const_iterator pos, size_type count, const T& copy)
+{
+	size_type start = static_cast<size_type>(pos - &m_buffer[0]);
+	_resize_if_needed(count);
+
+	_move_up_internal(start, count);
+	for (auto i = start + count - 1; i >= start; --i)
+		m_buffer[i] = copy;
 	return &m_buffer[start];
 }
 
@@ -652,8 +650,8 @@ inline void Vector<T>::_reserve_internal(size_type capacity)
 {
 	Vector tmp;
 	tmp.m_capacity = capacity;
-	tmp.m_buffer.reset(reinterpret_cast<T*>(
-		::operator new(capacity * sizeof(T))));
+	tmp.m_buffer.reset(
+		reinterpret_cast<T*>(::operator new(capacity * sizeof(T))));
 
 	_copy_values(tmp);
 
@@ -661,13 +659,12 @@ inline void Vector<T>::_reserve_internal(size_type capacity)
 }
 
 template <typename T>
-inline void Vector<T>::_move_up_internal(size_type start)
+inline void
+Vector<T>::_move_up_internal(const size_type start, const size_type count)
 {
-	if (start >= m_empty)
-		return;
-	_move_internal(std::move(back()));
-	for (size_type loop = m_empty - 2; loop > start; --loop) {
-		m_buffer[loop] = std::move(m_buffer[loop - 1]);
+	m_empty += count;
+	for (size_type loop = m_empty - 1; loop >= start + count; --loop) {
+		m_buffer[loop] = std::move(m_buffer[loop - count]);
 	}
 }
 
