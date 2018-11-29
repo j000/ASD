@@ -3,12 +3,6 @@
 #include <algorithm>
 #include <iostream>
 
-template <class Iterator>
-inline void my_sort(Iterator begin, Iterator end)
-{
-	std::sort(begin, end);
-}
-
 int main(int, char**)
 {
 	std::ios_base::sync_with_stdio(false);
@@ -19,7 +13,7 @@ int main(int, char**)
 	while (std::cin >> x)
 		data.push_back(x);
 
-	my_sort(data.begin(), data.end());
+	std::sort(data.begin(), data.end());
 
 	for (auto e : data)
 		std::cout << e << std::endl;

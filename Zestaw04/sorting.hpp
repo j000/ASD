@@ -1,0 +1,102 @@
+#include "Vector.hpp"
+
+#include <algorithm>
+
+template <class Iterator>
+inline void bubble_sort(Iterator begin, Iterator end)
+{
+	for (; begin != end; ++begin)
+		for (auto j = end - 1; j != begin; --j) {
+			if (*(j - 1) > *j)
+				std::iter_swap(j - 1, j);
+		}
+}
+
+template <class Iterator>
+inline void counting_sort(Iterator begin, Iterator end)
+{
+	using Base = decltype(*begin + 1);
+	Vector<Base> histogram(*begin + 1);
+	for (auto i = begin; i != end; ++i) {
+		auto old_size{histogram.size()};
+		auto new_size{*i + 1};
+		if (old_size < new_size) {
+			histogram.reserve(new_size);
+			histogram.insert(histogram.end(), new_size - old_size, 0);
+		}
+		histogram[*i] += 1;
+	}
+	auto total = 0;
+	for (auto& e : histogram) {
+		auto old_count = e;
+		e = total;
+		total += old_count;
+	}
+	Vector<Base> output(end - begin);
+	for (auto i = begin; i != end; ++i) {
+		output[histogram[*i]] = *i;
+		histogram[*i] += 1;
+	}
+	for (auto i = begin, j = output.begin(); i != end; ++i, ++j)
+		*i = *j;
+}
+
+template <class Iterator>
+inline void insertion_sort(Iterator begin, Iterator end)
+{
+	for (auto i = begin + 1; i != end; ++i) {
+		auto value = *i;
+		auto j = i - 1;
+		while (value < *j) {
+			*(j + 1) = *j;
+			--j;
+		}
+		*(j + 1) = value;
+	}
+}
+
+template <class Iterator>
+inline void radix_sort(Iterator begin, Iterator end)
+{
+	// constexpr unsigned N{4};
+	// constexpr unsigned base{1 << N}; // 2**N
+	constexpr unsigned base{16};
+	unsigned pow = 1;
+	// unsigned iteration = 0;
+	auto maximum = *std::max_element(begin, end);
+
+	while (pow <= maximum) {
+		// while ((1 << iteration) <= maximum) {
+		Vector<Vector<int>> buckets(base, Vector<int>());
+		for (auto i = begin; i != end; ++i) {
+			auto digit = *i / pow % base;
+			// auto digit = (*i >> iteration) & (base - 1);
+			buckets[digit].push_back(*i);
+		}
+		auto i = begin;
+		for (auto tmp : buckets) {
+			for (auto j : tmp) {
+				*i = j;
+				++i;
+			}
+		}
+		pow *= base;
+		// iteration += N;
+	}
+}
+
+template <class Iterator>
+inline void selection_sort(Iterator begin, Iterator end)
+{
+	// for (; begin != end; ++begin)
+	// 	std::iter_swap(begin, std::min_element(begin, end));
+	// return;
+	for (; begin != end; ++begin) {
+		auto min = begin;
+		for (auto j = begin + 1; j != end; ++j) {
+			if (*j < *min)
+				min = j;
+		}
+		std::iter_swap(begin, min);
+	}
+}
