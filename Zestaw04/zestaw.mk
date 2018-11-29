@@ -18,6 +18,7 @@ test.genRandom.txt: genRandom.x FORCE
 test.stdSort.txt: test.genRandom.txt
 test.bubbleSort.txt: test.genRandom.txt
 test.insertionSort.txt: test.genRandom.txt
+test.countingSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania
@@ -26,3 +27,6 @@ test: test_bubbleSort
 
 test_insertionSort: test.stdSort.txt
 test: test_insertionSort
+
+test_countingSort: test.stdSort.txt
+test: test_countingSort
