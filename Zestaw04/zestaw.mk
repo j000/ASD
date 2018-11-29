@@ -20,6 +20,7 @@ test.bubbleSort.txt: test.genRandom.txt
 test.insertionSort.txt: test.genRandom.txt
 test.countingSort.txt: test.genRandom.txt
 test.selectionSort.txt: test.genRandom.txt
+test.radixSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania
@@ -34,3 +35,6 @@ test: test_countingSort
 
 test_selectionSort: test.stdSort.txt
 test: test_selectionSort
+
+test_radixSort: test.stdSort.txt
+test: test_radixSort
