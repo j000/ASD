@@ -16,6 +16,9 @@ test.genRandom.txt: genRandom.x FORCE
 ####################
 # zależność od generatora
 test.stdSort.txt: test.genRandom.txt
+test.bubbleSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania
+test_bubbleSort: test.stdSort.txt
+test: test_bubbleSort
