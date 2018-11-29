@@ -12,6 +12,10 @@
 test.genRandom.txt: genRandom.x FORCE
 	./genRandom.x $(N) $(N)00 >$@
 
+test.sort.txt: test.genRandom.txt
+test.sort.txt:
+	sort -n < $^ > $@
+
 ####################
 # zależność od generatora
 test.stdSort.txt: test.genRandom.txt
@@ -23,17 +27,20 @@ test.radixSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania
-test_bubbleSort: test.stdSort.txt
+test_stdSort: test.sort.txt
+test: test_stdSort
+
+test_bubbleSort: test.sort.txt
 test: test_bubbleSort
 
-test_insertionSort: test.stdSort.txt
+test_insertionSort: test.sort.txt
 test: test_insertionSort
 
-test_countingSort: test.stdSort.txt
+test_countingSort: test.sort.txt
 test: test_countingSort
 
-test_selectionSort: test.stdSort.txt
+test_selectionSort: test.sort.txt
 test: test_selectionSort
 
-test_radixSort: test.stdSort.txt
+test_radixSort: test.sort.txt
 test: test_radixSort
