@@ -44,3 +44,15 @@ test: test_selectionSort
 
 test_radixSort: test.sort.txt
 test: test_radixSort
+
+####################
+result.txt: benchmark.x
+	./$^ | tee $@
+
+plot.png: gnu.plot result.txt
+	gnuplot -e 'set output "$@"' gnu.plot
+
+mostlyclean: clean_plot
+.PHONY: clean_plot
+clean_plot:
+	$(RM) plot.png result.txt
