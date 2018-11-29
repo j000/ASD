@@ -58,19 +58,14 @@ inline void insertion_sort(Iterator begin, Iterator end)
 template <class Iterator>
 inline void radix_sort(Iterator begin, Iterator end)
 {
-	// constexpr unsigned N{4};
-	// constexpr unsigned base{1 << N}; // 2**N
 	constexpr unsigned base{16};
-	unsigned pow = 1;
-	// unsigned iteration = 0;
+	decltype(1 + *begin) pow = 1;
 	auto maximum = *std::max_element(begin, end);
 
-	while (pow <= maximum) {
-		// while ((1 << iteration) <= maximum) {
+	while (pow && pow <= maximum) {
 		Vector<Vector<int>> buckets(base, Vector<int>());
 		for (auto i = begin; i != end; ++i) {
 			auto digit = *i / pow % base;
-			// auto digit = (*i >> iteration) & (base - 1);
 			buckets[digit].push_back(*i);
 		}
 		auto i = begin;
@@ -81,7 +76,6 @@ inline void radix_sort(Iterator begin, Iterator end)
 			}
 		}
 		pow *= base;
-		// iteration += N;
 	}
 }
 
