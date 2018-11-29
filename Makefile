@@ -167,7 +167,7 @@ test.gen%.txt: gen%.x FORCE
 	./$(filter %.x,$^) $(N) >$@
 
 test.%.txt: %.x
-	/usr/bin/time -f "%E (mem: %MKB, cpu: %P)" ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
+	/usr/bin/time -f "%C: %E (mem: %MKB, cpu: %P)" ./$(filter %.x,$^) <$(filter test.gen%,$^) >$@
 
 test_%: test.%.txt
 	@diff -sq $^
