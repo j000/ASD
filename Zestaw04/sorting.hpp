@@ -1,8 +1,11 @@
+#ifndef SORTING_HPP
+#define SORTING_HPP
+
 #include "Vector.hpp"
 
 #include <algorithm>
 
-template <class Iterator>
+template <typename Iterator>
 inline void bubble_sort(Iterator begin, Iterator end)
 {
 	for (; begin != end; ++begin)
@@ -12,7 +15,7 @@ inline void bubble_sort(Iterator begin, Iterator end)
 		}
 }
 
-template <class Iterator>
+template <typename Iterator>
 inline void counting_sort(Iterator begin, Iterator end)
 {
 	using Base = decltype(*begin + 1);
@@ -41,7 +44,7 @@ inline void counting_sort(Iterator begin, Iterator end)
 		*i = *j;
 }
 
-template <class Iterator>
+template <typename Iterator>
 inline void insertion_sort(Iterator begin, Iterator end)
 {
 	for (auto i = begin + 1; i != end; ++i) {
@@ -55,7 +58,7 @@ inline void insertion_sort(Iterator begin, Iterator end)
 	}
 }
 
-template <class Iterator>
+template <typename Iterator>
 inline void radix_sort(Iterator begin, Iterator end)
 {
 	constexpr unsigned base{16};
@@ -79,7 +82,7 @@ inline void radix_sort(Iterator begin, Iterator end)
 	}
 }
 
-template <class Iterator>
+template <typename Iterator>
 inline void selection_sort(Iterator begin, Iterator end)
 {
 	// for (; begin != end; ++begin)
@@ -94,3 +97,6 @@ inline void selection_sort(Iterator begin, Iterator end)
 		std::iter_swap(begin, min);
 	}
 }
+
+
+#endif /* SORTING_HPP */
