@@ -215,6 +215,8 @@ Vector<T>::Vector(size_type size, const_reference value)
 	}
 }
 
+// TODO: it does not work for just input iterators!
+//       right now it only works for RandomAccessIterators
 template <typename T>
 template <typename InputIterator, typename>
 Vector<T>::Vector(InputIterator first, InputIterator last)
