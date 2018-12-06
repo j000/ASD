@@ -156,7 +156,23 @@ N := 350
 
 .PHONY: test
 test:
-	@printf "[32mAll tests are successfull![0m\n"
+	@printf '[32m   /`"'\''-,__'"\n"
+	@printf '   \/\)`   `'\''-.'"\n"
+	@printf '  // \ .--.\   '\''.'"\n"
+	@printf ' //|-.  \_o `-.  \---._'"\n"
+	@printf ' || \_o\  _.-.\`'\''-'\''    `-.'"\n"
+	@printf ' || |\.-'\''`    |           `.'"\n"
+	@printf ' || | \  \    |             `\\'"\n"
+	@printf ' \| /  \ ,\'\'' /                \\'"\n"
+	@printf '  `'\''    `---'\''                  ;'"\n"
+	@printf '         `))          .-'\''      |'"\n"
+	@printf '      .-.// .-.     .'\''        ,;=D'"\n"
+	@printf '     /  // /   \  .'\''          ||'"\n"
+	@printf '    |..-'\'' |     '\''-'\''          //'"\n"
+	@printf '    ((    \         .===. _,//                    All tests are successfull!'"\n"
+	@printf '     '\''`'\''--`'\''---'\'''\'''\'',--\_/-;-'\''`'"\n"
+	@printf 'jgs                `~/^\`'"\n"
+	@printf '                    '\''==='\''[0m'"\n"
 
 %.x: %.cxx
 	g++ -std=c++11 -O2 -o $@ $^
