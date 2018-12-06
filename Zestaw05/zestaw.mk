@@ -23,6 +23,7 @@ test.sort.txt:
 # zależność od generatora
 test.heapSortIter.txt: test.genSorted.txt
 test.heapSortRec.txt: test.genSorted.txt
+test.mergeSort.txt: test.genSorted.txt
 
 ####################
 # plik do porównania
@@ -31,6 +32,9 @@ test: test_heapSortIter
 
 test_heapSortRec: test.sort.txt
 test: test_heapSortRec
+
+test_mergeSort: test.sort.txt
+test: test_mergeSort
 
 ####################
 result.txt: benchmark.x
