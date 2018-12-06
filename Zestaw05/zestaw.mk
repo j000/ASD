@@ -8,18 +8,21 @@
 # wszystko zależy od nagłówka i biblioteki
 # $(FILES:.cpp=.o): #####.hpp | lib####.so
 
-.INTERMEDIATE: genRandom.x
-test.genRandom.txt: genRandom.x FORCE
-	./genRandom.x $(N) $(N)00 >$@
+.INTERMEDIATE: genSorted.x
+test.genSorted.txt: genSorted.x FORCE
+	./genSorted.x $(N) $(N)00 >$@
 
-test.sort.txt: test.genRandom.txt
+test.genSorted.%.txt: genSorted.x FORCE
+	./genSorted.x $* $*00 >$@
+
+test.sort.txt: test.genSorted.txt
 test.sort.txt:
 	sort -n < $^ > $@
 
 ####################
 # zależność od generatora
-test.heapSortIter.txt: test.genRandom.txt
-test.heapSortRec.txt: test.genRandom.txt
+test.heapSortIter.txt: test.genSorted.txt
+test.heapSortRec.txt: test.genSorted.txt
 
 ####################
 # plik do porównania
@@ -33,8 +36,8 @@ test: test_heapSortRec
 result.txt: benchmark.x
 	./$^ | tee $@
 
-plot.png: gnu.plot result.txt
-	gnuplot -e 'set output "$@"' gnu.plot
+plot.%.png: gnu.plot result.%.txt
+	gnuplot -e 'set output "$@"' -e 'filename="$(filter result.%.txt,$^)"' gnu.plot
 
 mostlyclean: clean_plot
 .PHONY: clean_plot
