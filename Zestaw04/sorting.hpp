@@ -18,8 +18,9 @@ inline void bubble_sort(Iterator begin, Iterator end)
 template <typename Iterator>
 inline void counting_sort(Iterator begin, Iterator end)
 {
-	using Base = decltype(*begin + 1);
-	Vector<Base> histogram(*begin + 1);
+	using Type = typename std::remove_reference<decltype(*begin)>::type;
+
+	Vector<Type> histogram(*begin + 1);
 	for (auto i = begin; i != end; ++i) {
 		auto old_size{histogram.size()};
 		auto new_size{*i + 1};
@@ -35,7 +36,7 @@ inline void counting_sort(Iterator begin, Iterator end)
 		e = total;
 		total += old_count;
 	}
-	Vector<Base> output(end - begin);
+	Vector<Type> output(end - begin);
 	for (auto i = begin; i != end; ++i) {
 		output[histogram[*i]] = *i;
 		histogram[*i] += 1;
@@ -61,12 +62,14 @@ inline void insertion_sort(Iterator begin, Iterator end)
 template <typename Iterator>
 inline void radix_sort(Iterator begin, Iterator end)
 {
+	using Type = typename std::remove_reference<decltype(*begin)>::type;
+
 	constexpr unsigned base{16};
 	decltype(1 + *begin) pow = 1;
 	auto maximum = *std::max_element(begin, end);
 
 	while (pow && pow <= maximum) {
-		Vector<Vector<int>> buckets(base, Vector<int>());
+		Vector<Vector<Type>> buckets(base, Vector<Type>());
 		for (auto i = begin; i != end; ++i) {
 			auto digit = *i / pow % base;
 			buckets[digit].push_back(*i);
@@ -80,6 +83,9 @@ inline void radix_sort(Iterator begin, Iterator end)
 		}
 		pow *= base;
 	}
+	// TODO: handle negative numbers...
+	// if (*(end - 1) < 0) {
+	// }
 }
 
 template <typename Iterator>
@@ -97,6 +103,5 @@ inline void selection_sort(Iterator begin, Iterator end)
 		std::iter_swap(begin, min);
 	}
 }
-
 
 #endif /* SORTING_HPP */
