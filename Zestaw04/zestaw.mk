@@ -50,7 +50,7 @@ result.txt: benchmark.x
 	./$^ | tee $@
 
 plot.png: gnu.plot result.txt
-	gnuplot -e 'set output "$@"' gnu.plot
+	gnuplot -e 'set output "$@"' -e 'filename="result.txt"' gnu.plot
 
 mostlyclean: clean_plot
 .PHONY: clean_plot
