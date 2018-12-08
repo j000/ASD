@@ -7,8 +7,8 @@ int main(int, char**)
 {
 	std::ios_base::sync_with_stdio(false);
 
-	Vector<int> data;
-	int x;
+	Vector<unsigned> data;
+	unsigned x;
 
 	while (std::cin >> x)
 		data.push_back(x);
