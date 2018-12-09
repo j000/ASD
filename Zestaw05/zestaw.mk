@@ -50,6 +50,8 @@ result.%.txt: benchmark.x test.%.160000.txt
 plot.%.png: gnu.plot result.%.txt
 	gnuplot -e 'set output "$@"' -e 'filename="$(filter result.%.txt,$^)"' gnu.plot
 
+all: plot.genSorted.png plot.genRandom.png plot.genSortedFirst.png plot.genSortedLast.png
+
 mostlyclean: clean_plot
 .PHONY: clean_plot
 clean_plot:
