@@ -54,8 +54,8 @@ endif
 
 ####################
 # wszystko zależy od Makefile
-$(FILES:.cpp=.o): Makefile
-$(HELPERS:.cpp=.o): Makefile
+$(FILES:.cpp=.o): Makefile zestaw.mk
+$(HELPERS:.cpp=.o): Makefile zestaw.mk
 
 # make może automatycznie usunąć te pliki
 .INTERMEDIATE: $(HELPERS:.cpp=.o) $(FILES:.cpp=.o)

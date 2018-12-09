@@ -8,9 +8,8 @@
 # wszystko zależy od nagłówka i biblioteki
 # $(FILES:.cpp=.o): #####.hpp | lib####.so
 
-.INTERMEDIATE: genSorted.x
-test.genSorted.txt: genSorted.x FORCE
-	./genSorted.x $(N) $(N)00 >$@
+test.gen%.txt: gen%.x FORCE
+	./gen$*.x $(N) >$@
 
 test.genSorted.%.txt: genSorted.x FORCE
 	./genSorted.x $* $*00 >$@
@@ -37,8 +36,8 @@ test_mergeSort: test.sort.txt
 test: test_mergeSort
 
 ####################
-result.txt: benchmark.x
-	./$^ | tee $@
+result.%.txt: benchmark.x test.%.160000.txt
+	./$(filter %.x,$^) < $(filter test.%,$^) | tee $@
 
 plot.%.png: gnu.plot result.%.txt
 	gnuplot -e 'set output "$@"' -e 'filename="$(filter result.%.txt,$^)"' gnu.plot
@@ -46,4 +45,4 @@ plot.%.png: gnu.plot result.%.txt
 mostlyclean: clean_plot
 .PHONY: clean_plot
 clean_plot:
-	$(RM) plot.png result.txt
+	$(RM) plot.*.png result.*.txt
