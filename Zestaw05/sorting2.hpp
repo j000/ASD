@@ -21,6 +21,18 @@ inline void heap_sort_rec(Iterator begin, Iterator end)
 	Heap<Type>::sortRec(begin, size);
 }
 
+template <typename Iterator>
+inline void c_qsort(Iterator begin, Iterator end)
+{
+	using Type = typename std::remove_reference<decltype(*begin)>::type;
+	auto compare = [](const void* arg1, const void* arg2) -> int {
+		Type lhs = *static_cast<const Type*>(arg1);
+		Type rhs = *static_cast<const Type*>(arg2);
+		return -(lhs < rhs) + (lhs > rhs);
+	};
+	qsort(begin, end - begin, sizeof(Type), compare);
+}
+
 namespace helper {
 template <typename Iterator>
 inline Iterator partition(Iterator begin, Iterator end)
