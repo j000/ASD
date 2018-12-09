@@ -11,18 +11,18 @@
 test.gen%.txt: gen%.x FORCE
 	./gen$*.x $(N) >$@
 
-test.genSorted.%.txt: genSorted.x FORCE
-	./genSorted.x $* $*00 >$@
+test.%.160000.txt: %.x
+	./$*.x 160000 >$@
 
-test.sort.txt: test.genSorted.txt
+test.sort.txt: test.genRandom.txt
 test.sort.txt:
 	sort -n < $^ > $@
 
 ####################
 # zależność od generatora
-test.heapSortIter.txt: test.genSorted.txt
-test.heapSortRec.txt: test.genSorted.txt
-test.mergeSort.txt: test.genSorted.txt
+test.heapSortIter.txt: test.genRandom.txt
+test.heapSortRec.txt: test.genRandom.txt
+test.mergeSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania

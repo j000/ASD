@@ -22,6 +22,9 @@ int main(int argc, char** argv)
 	}
 
 	auto list{0u};
+	std::cout << get_random(i) << std::endl;
+	--i;
+
 	while (i > 0) {
 		list += get_random(4);
 		std::cout << list << std::endl;

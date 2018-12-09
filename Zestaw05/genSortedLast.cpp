@@ -22,11 +22,14 @@ int main(int argc, char** argv)
 	}
 
 	auto list{0u};
+	--i;
+
 	while (i > 0) {
 		list += get_random(4);
 		std::cout << list << std::endl;
 		--i;
 	}
+	std::cout << get_random(list) << std::endl;
 
 	return EXIT_SUCCESS;
 }
