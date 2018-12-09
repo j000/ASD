@@ -47,6 +47,7 @@ void test_sort(
 
 int main(int, char**)
 {
+	using std::swap;
 	std::ios_base::sync_with_stdio(false);
 
 	Vector<unsigned> dane;
@@ -71,6 +72,7 @@ int main(int, char**)
 #endif
 
 	for (auto j : counts) {
+		swap(dane[j-1], dane.back());
 		std::cout << j;
 		test_sort("std::sort", dane.begin(), j, std::sort);
 		test_sort("radix sort", dane.begin(), j, radix_sort);
@@ -95,6 +97,7 @@ int main(int, char**)
 		test_sort("heap sort (rec)", dane.begin(), j, heap_sort_rec);
 #endif
 		std::cout << std::endl;
+		swap(dane[j-1], dane.back());
 	}
 	return 0;
 }
