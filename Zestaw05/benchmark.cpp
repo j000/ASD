@@ -1,3 +1,4 @@
+#include "Heap.hpp"
 #include "Vector.hpp"
 #include "sorting.hpp"
 #include "sorting2.hpp"
@@ -72,7 +73,7 @@ int main(int, char**)
 #endif
 
 	for (auto j : counts) {
-		swap(dane[j-1], dane.back());
+		swap(dane[j - 1], dane.back());
 		std::cout << j;
 		test_sort("std::sort", dane.begin(), j, std::sort);
 		test_sort("radix sort", dane.begin(), j, radix_sort);
@@ -97,7 +98,7 @@ int main(int, char**)
 		test_sort("heap sort (rec)", dane.begin(), j, heap_sort_rec);
 #endif
 		std::cout << std::endl;
-		swap(dane[j-1], dane.back());
+		swap(dane[j - 1], dane.back());
 	}
 	return 0;
 }

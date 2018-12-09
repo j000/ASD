@@ -1,3 +1,4 @@
+#include "Heap.hpp"
 #include "Vector.hpp"
 #include "sorting.hpp"
 #include "sorting2.hpp"
