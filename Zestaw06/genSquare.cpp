@@ -5,7 +5,8 @@
 double get_random()
 {
 	thread_local static std::mt19937 generator{std::random_device{}()};
-	std::uniform_real_distribution<double> distribution{0., 1.};
+	std::uniform_real_distribution<> distribution{
+		0., std::nextafter(1., 1.1)};
 	return distribution(generator);
 }
 
