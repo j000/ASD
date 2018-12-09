@@ -68,4 +68,57 @@ inline void quick_sort(Iterator begin, Iterator end)
 	quick_sort(pivot, end);
 }
 
+namespace helper {
+template <typename Iterator>
+inline void merge(const Iterator left, const Iterator right, const Iterator end)
+{
+	using std::swap;
+	using Type = typename std::remove_reference<decltype(*left)>::type;
+
+	Vector<Type> tmp(right - left);
+	std::copy(left, right, tmp.begin());
+
+	auto i = tmp.begin();
+	const auto end2 = tmp.end();
+	auto out = left;
+	auto j = right;
+	while (i != end2 && j != end) {
+		if (*i < *j) {
+			*out = *i;
+			++i;
+		} else {
+			*out = *j;
+			++j;
+		}
+		++out;
+	}
+	while (i != end2) {
+		*out = *i;
+		++i;
+		++out;
+	}
+}
+}
+
+template <typename Iterator>
+inline void merge_sort(const Iterator begin, const Iterator end)
+{
+	auto size = std::distance(begin, end);
+	if (size < 2)
+		return;
+
+	for (auto krok = 1u; krok < size; krok *= 2) {
+		for (auto start = begin; std::distance(start, end) >= 0;
+			 start += 2 * krok) {
+			if (std::distance(start + krok, end) > 0) {
+				if (std::distance(start, end) < 2 * krok) {
+					helper::merge(start, start + krok, end);
+				} else {
+					helper::merge(start, start + krok, start + 2 * krok);
+				}
+			}
+		}
+	}
+}
+
 #endif /* SORTING2_HPP */
