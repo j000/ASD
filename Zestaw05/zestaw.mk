@@ -23,6 +23,7 @@ test.sort.txt:
 test.heapSortIter.txt: test.genRandom.txt
 test.heapSortRec.txt: test.genRandom.txt
 test.mergeSort.txt: test.genRandom.txt
+test.quickSort.txt: test.genRandom.txt
 
 ####################
 # plik do porównania
@@ -34,6 +35,9 @@ test: test_heapSortRec
 
 test_mergeSort: test.sort.txt
 test: test_mergeSort
+
+test_quickSort: test.sort.txt
+test: test_quickSort
 
 ####################
 result.%.txt: benchmark.x test.%.160000.txt
