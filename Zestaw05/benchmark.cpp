@@ -84,7 +84,8 @@ int main(int, char**)
 		test_sort("qsort", dane.begin(), j, c_qsort);
 		test_sort("heap sort (iter)", dane.begin(), j, heap_sort_iter);
 		test_sort("heap sort", dane.begin(), j, heap_sort_rec);
-		test_sort("quicksort", dane.begin(), j, quick_sort);
+		test_sort("quicksort", dane.begin(), j, quick_sort_simple);
+		test_sort("proper quicksort", dane.begin(), j, quick_sort);
 		test_sort("merge sort", dane.begin(), j, merge_sort);
 
 #ifdef MALE_DANE

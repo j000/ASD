@@ -14,7 +14,7 @@ int main(int, char**)
 	while (std::cin >> x)
 		data.push_back(x);
 
-	quick_sort(data.begin(), data.end());
+	quick_sort_simple(data.begin(), data.end());
 
 	for (auto e : data)
 		std::cout << e << std::endl;

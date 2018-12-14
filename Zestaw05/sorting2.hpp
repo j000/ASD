@@ -2,6 +2,7 @@
 #define SORTING2_HPP
 
 #include "Vector.hpp"
+#include "sorting.hpp"
 
 #include <algorithm>
 
@@ -54,14 +55,38 @@ inline Iterator partition(Iterator begin, Iterator end)
 }
 
 template <typename Iterator>
-inline void quick_sort(Iterator begin, Iterator end)
+inline void quick_sort_simple(Iterator begin, Iterator end)
 {
 	if (std::distance(begin, end) < 2)
 		return;
 
 	auto pivot = helper::partition(begin, end);
-	quick_sort(begin, pivot);
-	quick_sort(pivot, end);
+	quick_sort_simple(begin, pivot);
+	quick_sort_simple(pivot, end);
+}
+
+namespace helper {
+template <typename Iterator>
+inline void quick_sort(Iterator begin, Iterator end, unsigned limit = 16)
+{
+	if (std::distance(begin, end) < 2)
+		return;
+
+	if (std::distance(begin, end) < 16 || limit == 0) {
+		insertion_sort(begin, end);
+		return;
+	}
+
+	auto pivot = helper::partition(begin, end);
+	quick_sort(begin, pivot, limit - 1);
+	quick_sort(pivot, end, limit - 1);
+}
+}
+
+template <typename Iterator>
+inline void quick_sort(Iterator begin, Iterator end)
+{
+	helper::quick_sort(begin, end, 16);
 }
 
 namespace helper {
