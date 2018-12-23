@@ -191,7 +191,7 @@ private:
 		}
 	}
 
-public:
+private:
 	size_type m_capacity{0};
 	size_type m_empty{0};
 	std::unique_ptr<T[], Deleter> m_buffer{
