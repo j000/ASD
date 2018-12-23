@@ -51,7 +51,7 @@ inline void insertion_sort(Iterator begin, Iterator end)
 	for (auto i = begin + 1; i != end; ++i) {
 		auto value = *i;
 		auto j = i - 1;
-		while (value < *j) {
+		while (std::distance(begin, j) >= 0 && value < *j) {
 			*(j + 1) = *j;
 			--j;
 		}
