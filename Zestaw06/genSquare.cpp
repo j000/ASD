@@ -1,12 +1,14 @@
-#include <iomanip>
-#include <iostream>
-#include <random>
+#include <cstdlib> // for atol, EXIT_FAILURE, EXIT_SUCCESS
+#include <iomanip> // for operator<<, setprecision
+#include <iostream> // for operator<<, endl, cout, ostream, basic_ostream
+#include <limits> // for numeric_limits, numeric_limits<>::max_digits10
+#include <math.h> // for nextafter
+#include <random> // for mt19937, random_device, uniform_real_distribution
 
 double get_random()
 {
 	thread_local static std::mt19937 generator{std::random_device{}()};
-	std::uniform_real_distribution<> distribution{
-		0., std::nextafter(1., 1.1)};
+	std::uniform_real_distribution<> distribution{0., std::nextafter(1., 1.1)};
 	return distribution(generator);
 }
 
