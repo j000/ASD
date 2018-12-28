@@ -15,13 +15,13 @@ double get_random()
 int main(int argc, char** argv)
 {
 	if (argc < 2) {
-		std::cout << "Podaj rozmiar listy" << std::endl;
+		std::cout << "Podaj ilość punktów" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 	auto i{std::atol(argv[1])};
 	if (i <= 0) {
-		std::cout << "Podaj poprawny rozmiar listy" << std::endl;
+		std::cout << "Niepoprawna ilość punktów" << std::endl;
 		return EXIT_FAILURE;
 	}
 
