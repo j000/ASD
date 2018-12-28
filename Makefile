@@ -97,7 +97,7 @@ lib%.so: %.o
 	$(LINK.o) $^ $(LOADLIBES) $(LDLIBS) $(OUTPUT_OPTION)
 
 %.d: %.cpp
-	$(CXX) $(CPPFLAGS) -M $<
+	$(CXX) $(CPPFLAGS:MD=M) -MF $@ $<
 
 ifneq (,$(wildcard $(FILES:.cpp=.d)))
 -include $(wildcard $(FILES:.cpp=.d))
