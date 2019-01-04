@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 
 int main(int, char**)
 {
@@ -8,13 +7,13 @@ int main(int, char**)
 
 	int n1;
 	std::cin >> n1;
-	std::vector<int> a(n1);
+	Vector<int> a(n1);
 	for (auto i = 0; i < n1; i++)
 		std::cin >> a[i];
 
 	int n2;
 	std::cin >> n2;
-	std::vector<int> b(n2);
+	Vector<int> b(n2);
 	for (auto i = 0; i < n2; i++)
 		std::cin >> b[i];
 
