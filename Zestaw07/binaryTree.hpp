@@ -146,9 +146,10 @@ void BinaryTree<T>::prettyPrint(
 	Node* node, std::string sp, const std::string& sn) const noexcept
 {
 #if 1
-	static const std::string cr{"┌─"};
-	static const std::string cp{"│ "};
-	static const std::string cl{"└─"};
+	static const std::string cc{"    "};
+	static const std::string cr{"┌───"};
+	static const std::string cp{"│   "};
+	static const std::string cl{"└───"};
 #else
 	static const std::string cr{".-"};
 	static const std::string cp{"| "};
@@ -163,17 +164,17 @@ void BinaryTree<T>::prettyPrint(
 	s = sp;
 	if (&sn == &cr) {
 		s = s.substr(0, s.length() - cp.length());
-		s += "  ";
+		s += cc;
 	}
 	prettyPrint(node->rightChild, s + cp, cr);
 
 	s = sp.substr(0, sp.length() - cp.length());
-	std::cout << s << sn << node->value << std::endl;
+	std::cout << "\033[2;34m" << s << sn << "\033[22;39m" << node->value << std::endl;
 
 	s = sp;
 	if (sn == cl) {
 		s = s.substr(0, s.length() - cp.length());
-		s += "  ";
+		s += cc;
 	}
 	prettyPrint(node->leftChild, s + cp, cl);
 }
