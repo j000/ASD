@@ -24,11 +24,14 @@ int main(int, char**)
 			  << " " << tree.maximum() << std::endl;
 
 	for (int i = 1; i < 10; ++i) {
-		// if (tree.searchRecursive(i))
-		if (tree.search(i))
-			std::cout << "Yes";
+		if (tree.searchRecursive(i))
+			std::cout << "Y";
 		else
-			std::cout << "No";
+			std::cout << "N";
+		if (tree.search(i))
+			std::cout << "es";
+		else
+			std::cout << "o";
 		std::cout << std::endl;
 	}
 
