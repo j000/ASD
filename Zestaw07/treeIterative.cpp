@@ -40,15 +40,15 @@ int main(int, char**)
 		while (current || !stack.empty()) {
 			while (current) {
 				stack.push(current);
-				current = current->leftChild;
+				current = current->leftChild();
 			}
 
 			current = stack.top();
 			stack.pop();
 
-			std::cout << current->value << std::endl;
+			std::cout << current->value() << std::endl;
 
-			current = current->rightChild;
+			current = current->rightChild();
 		}
 	}
 

@@ -51,9 +51,10 @@ private:
 
 template <typename T>
 class BinaryTree<T>::Node {
+	friend BinaryTree<T>;
+
 public:
-	Node() = default;
-	Node(const T _value) : value{_value}
+	Node(const T value) : m_value{value}
 	{
 	}
 	~Node() = default;
@@ -62,10 +63,54 @@ public:
 	Node(Node&&) = default;
 	Node& operator=(Node&&) = default;
 
-	T value{};
-	Node* leftChild{nullptr};
-	Node* rightChild{nullptr};
+	const T& value() const noexcept;
+	Node* leftChild() const noexcept;
+	Node* rightChild() const noexcept;
+
+private:
+	Node*& leftChildRef() noexcept;
+	Node*& rightChildRef() noexcept;
+
+	const T m_value{};
+	Node* m_leftChild{nullptr};
+	Node* m_rightChild{nullptr};
 };
+
+////////////////////////////////////////
+
+template <typename T>
+inline const T& BinaryTree<T>::Node::value() const noexcept
+{
+	return m_value;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::leftChild() const
+	noexcept
+{
+	return m_leftChild;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::rightChild() const
+	noexcept
+{
+	return m_rightChild;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::Node*&
+BinaryTree<T>::Node::leftChildRef() noexcept
+{
+	return m_leftChild;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::Node*&
+BinaryTree<T>::Node::rightChildRef() noexcept
+{
+	return m_rightChild;
+}
 
 ////////////////////////////////////////
 
@@ -80,8 +125,8 @@ void BinaryTree<T>::deleter(Node* node)
 {
 	if (!node)
 		return;
-	deleter(node->leftChild);
-	deleter(node->rightChild);
+	deleter(node->leftChild());
+	deleter(node->rightChild());
 	delete node;
 }
 
@@ -104,12 +149,12 @@ const T* BinaryTree<T>::search(const T& x) const noexcept
 {
 	auto tmp{root};
 	while (tmp != nullptr) {
-		if (tmp->value == x)
-			return &tmp->value;
-		if (tmp->value > x)
-			tmp = tmp->leftChild;
+		if (tmp->value() == x)
+			return &tmp->value();
+		if (tmp->value() > x)
+			tmp = tmp->leftChild();
 		else
-			tmp = tmp->rightChild;
+			tmp = tmp->rightChild();
 	}
 
 	return nullptr;
@@ -127,11 +172,11 @@ const T* BinaryTree<T>::searchRecursive(const Node* node, const T& x) const
 {
 	if (!node)
 		return nullptr;
-	if (node->value == x)
-		return &node->value;
-	if (node->value > x)
-		return searchRecursive(node->leftChild, x);
-	return searchRecursive(node->rightChild, x);
+	if (node->value() == x)
+		return &node->value();
+	if (node->value() > x)
+		return searchRecursive(node->leftChild(), x);
+	return searchRecursive(node->rightChild(), x);
 }
 
 template <typename T>
@@ -166,17 +211,18 @@ void BinaryTree<T>::prettyPrint(
 		s = s.substr(0, s.length() - cp.length());
 		s += cc;
 	}
-	prettyPrint(node->rightChild, s + cp, cr);
+	prettyPrint(node->rightChild(), s + cp, cr);
 
 	s = sp.substr(0, sp.length() - cp.length());
-	std::cout << "\033[2;34m" << s << sn << "\033[22;39m" << node->value << std::endl;
+	std::cout << "\033[2;34m" << s << sn << "\033[22;39m" << node->value()
+			  << std::endl;
 
 	s = sp;
 	if (sn == cl) {
 		s = s.substr(0, s.length() - cp.length());
 		s += cc;
 	}
-	prettyPrint(node->leftChild, s + cp, cl);
+	prettyPrint(node->leftChild(), s + cp, cl);
 }
 
 template <typename T>
@@ -192,9 +238,9 @@ void BinaryTree<T>::inorder(
 {
 	if (!node)
 		return;
-	inorder(node->leftChild, f);
-	f(node->value);
-	inorder(node->rightChild, f);
+	inorder(node->leftChild(), f);
+	f(node->value());
+	inorder(node->rightChild(), f);
 }
 
 template <typename T>
@@ -210,9 +256,9 @@ void BinaryTree<T>::preorder(
 {
 	if (!node)
 		return;
-	f(node->value);
-	preorder(node->leftChild, f);
-	preorder(node->rightChild, f);
+	f(node->value());
+	preorder(node->leftChild(), f);
+	preorder(node->rightChild(), f);
 }
 
 template <typename T>
@@ -228,9 +274,9 @@ void BinaryTree<T>::postorder(
 {
 	if (!node)
 		return;
-	postorder(node->leftChild, f);
-	postorder(node->rightChild, f);
-	f(node->value);
+	postorder(node->leftChild(), f);
+	postorder(node->rightChild(), f);
+	f(node->value());
 }
 
 template <typename T>
@@ -241,10 +287,10 @@ const T& BinaryTree<T>::minimum() const
 
 	auto tmp{root};
 
-	while (tmp->leftChild)
-		tmp = tmp->leftChild;
+	while (tmp->leftChild())
+		tmp = tmp->leftChild();
 
-	return tmp->value;
+	return tmp->value();
 }
 
 template <typename T>
@@ -255,10 +301,10 @@ const T& BinaryTree<T>::maximum() const
 
 	auto tmp{root};
 
-	while (tmp->rightChild)
-		tmp = tmp->rightChild;
+	while (tmp->rightChild())
+		tmp = tmp->rightChild();
 
-	return tmp->value;
+	return tmp->value();
 }
 
 template <typename T>
@@ -284,11 +330,11 @@ void BinaryTree<T>::insert(
 		parent = newNode;
 		return;
 	}
-	if (parent->value > newNode->value) {
-		insert(parent->leftChild, newNode, level + 1);
+	if (parent->value() > newNode->value()) {
+		insert(parent->leftChildRef(), newNode, level + 1);
 		return;
 	}
-	insert(parent->rightChild, newNode, level + 1);
+	insert(parent->rightChildRef(), newNode, level + 1);
 }
 
 ////////////////////////////////////////
