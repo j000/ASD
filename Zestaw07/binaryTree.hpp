@@ -8,10 +8,15 @@
 #include <string>
 #include <utility>
 
+#include "PointerIntPair.h"
+
+using namespace std::string_literals;
+
 template <typename T>
 class BinaryTree {
 public:
 	class Node;
+	using NodePtr = llvm::PointerIntPair<Node*, 1, bool>;
 
 	~BinaryTree();
 
@@ -20,7 +25,8 @@ public:
 	const T* search(const T&) const noexcept;
 	const T* searchRecursive(const T&) const noexcept;
 	void prettyPrint() const noexcept;
-	void prettyPrint(Node*, std::string, const std::string&) const noexcept;
+	void prettyPrint(const Node*, const std::string&, const std::string&) const
+		noexcept;
 
 	void inorder(const std::function<void(const T&)>&) const noexcept;
 	void preorder(const std::function<void(const T&)>&) const noexcept;
@@ -32,8 +38,9 @@ public:
 	unsigned depth() const noexcept;
 
 private:
-	void insert(Node*&, Node*, unsigned = 1) noexcept;
-	const T* searchRecursive(const Node*, const T&) const noexcept;
+	void insertLeft(NodePtr&, Node*, Node*, unsigned = 1) noexcept;
+	void insertRight(NodePtr&, Node*, Node*, unsigned = 1) noexcept;
+	static const T* searchRecursive(const Node*, const T&) noexcept;
 	void inorder(const Node*, const std::function<void(const T&)>&) const
 		noexcept;
 	void preorder(const Node*, const std::function<void(const T&)>&) const
@@ -42,7 +49,7 @@ private:
 		noexcept;
 	static void deleter(Node*);
 
-	Node* root{nullptr};
+	NodePtr root{nullptr};
 	unsigned m_size{0};
 	unsigned m_depth{0};
 };
@@ -52,6 +59,8 @@ private:
 template <typename T>
 class BinaryTree<T>::Node {
 	friend BinaryTree<T>;
+
+	enum : bool { THREAD = 0, NO_THREAD };
 
 public:
 	Node(const T value) : m_value{value}
@@ -66,17 +75,20 @@ public:
 	const T& value() const noexcept;
 	Node* leftChild() const noexcept;
 	Node* rightChild() const noexcept;
+	Node* previous() const noexcept;
+	Node* next() const noexcept;
 
 private:
-	Node*& leftChildRef() noexcept;
-	Node*& rightChildRef() noexcept;
+	NodePtr& leftPointer() noexcept;
+	NodePtr& rightPointer() noexcept;
 
 	const T m_value{};
-	Node* m_leftChild{nullptr};
-	Node* m_rightChild{nullptr};
+	NodePtr m_leftChild{nullptr};
+	NodePtr m_rightChild{nullptr};
 };
 
 ////////////////////////////////////////
+// Node implementation
 
 template <typename T>
 inline const T& BinaryTree<T>::Node::value() const noexcept
@@ -88,40 +100,72 @@ template <typename T>
 inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::leftChild() const
 	noexcept
 {
-	return m_leftChild;
+	if (m_leftChild.getInt() == THREAD)
+		return nullptr;
+	return m_leftChild.getPointer();
 }
 
 template <typename T>
 inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::rightChild() const
 	noexcept
 {
-	return m_rightChild;
+	if (m_rightChild.getInt() == THREAD)
+		return nullptr;
+	return m_rightChild.getPointer();
 }
 
 template <typename T>
-inline typename BinaryTree<T>::Node*&
-BinaryTree<T>::Node::leftChildRef() noexcept
+inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::previous() const
+	noexcept
+{
+	if (m_leftChild.getInt() == Node::THREAD)
+		return m_leftChild.getPointer();
+
+	auto current{m_leftChild.getPointer()};
+	while (current->rightChild()) {
+		current = current->rightChild();
+	}
+	return current;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::Node* BinaryTree<T>::Node::next() const noexcept
+{
+	if (m_rightChild.getInt() == Node::THREAD)
+		return m_rightChild.getPointer();
+
+	auto current{m_rightChild.getPointer()};
+	while (current->leftChild()) {
+		current = current->leftChild();
+	}
+	return current;
+}
+
+template <typename T>
+inline typename BinaryTree<T>::NodePtr&
+BinaryTree<T>::Node::leftPointer() noexcept
 {
 	return m_leftChild;
 }
 
 template <typename T>
-inline typename BinaryTree<T>::Node*&
-BinaryTree<T>::Node::rightChildRef() noexcept
+inline typename BinaryTree<T>::NodePtr&
+BinaryTree<T>::Node::rightPointer() noexcept
 {
 	return m_rightChild;
 }
 
 ////////////////////////////////////////
+// BinaryTree implementation
 
 template <typename T>
 BinaryTree<T>::~BinaryTree()
 {
-	deleter(root);
+	deleter(root.getPointer());
 }
 
 template <typename T>
-void BinaryTree<T>::deleter(Node* node)
+void BinaryTree<T>::deleter(Node* const node)
 {
 	if (!node)
 		return;
@@ -134,20 +178,20 @@ template <typename T>
 void BinaryTree<T>::insert(const T& x)
 {
 	auto tmp{new Node(x)};
-	insert(root, tmp);
+	insertLeft(root, tmp, nullptr);
 }
 
 template <typename T>
 void BinaryTree<T>::insert(T&& x)
 {
 	auto tmp{new Node(std::forward<T>(x))};
-	insert(root, tmp);
+	insertLeft(root, tmp, nullptr);
 }
 
 template <typename T>
 const T* BinaryTree<T>::search(const T& x) const noexcept
 {
-	auto tmp{root};
+	auto tmp{root.getPointer()};
 	while (tmp != nullptr) {
 		if (tmp->value() == x)
 			return &tmp->value();
@@ -163,12 +207,12 @@ const T* BinaryTree<T>::search(const T& x) const noexcept
 template <typename T>
 inline const T* BinaryTree<T>::searchRecursive(const T& x) const noexcept
 {
-	return searchRecursive(root, x);
+	return searchRecursive(root.getPointer(), x);
 }
 
 template <typename T>
-const T* BinaryTree<T>::searchRecursive(const Node* node, const T& x) const
-	noexcept
+const T*
+BinaryTree<T>::searchRecursive(const Node* const node, const T& x) noexcept
 {
 	if (!node)
 		return nullptr;
@@ -183,12 +227,14 @@ template <typename T>
 void BinaryTree<T>::prettyPrint() const noexcept
 {
 	std::string tmp{""};
-	prettyPrint(root, "", tmp);
+	prettyPrint(root.getPointer(), ""s, tmp);
 }
 
 template <typename T>
 void BinaryTree<T>::prettyPrint(
-	Node* node, std::string sp, const std::string& sn) const noexcept
+	const Node* const node,
+	const std::string& sp,
+	const std::string& sn) const noexcept
 {
 #if 1
 	static const std::string cc{"    "};
@@ -196,9 +242,10 @@ void BinaryTree<T>::prettyPrint(
 	static const std::string cp{"│   "};
 	static const std::string cl{"└───"};
 #else
-	static const std::string cr{".-"};
-	static const std::string cp{"| "};
-	static const std::string cl{"'-"};
+	static const std::string cc{"   "};
+	static const std::string cr{",--"};
+	static const std::string cp{"|  "};
+	static const std::string cl{"`--"};
 #endif
 
 	if (!node)
@@ -218,7 +265,7 @@ void BinaryTree<T>::prettyPrint(
 			  << std::endl;
 
 	s = sp;
-	if (sn == cl) {
+	if (&sn == &cl) {
 		s = s.substr(0, s.length() - cp.length());
 		s += cc;
 	}
@@ -229,12 +276,13 @@ template <typename T>
 inline void BinaryTree<T>::inorder(const std::function<void(const T&)>& f) const
 	noexcept
 {
-	inorder(root, f);
+	inorder(root.getPointer(), f);
 }
 
 template <typename T>
 void BinaryTree<T>::inorder(
-	const Node* node, const std::function<void(const T&)>& f) const noexcept
+	const Node* const node,
+	const std::function<void(const T&)>& f) const noexcept
 {
 	if (!node)
 		return;
@@ -252,7 +300,8 @@ BinaryTree<T>::preorder(const std::function<void(const T&)>& f) const noexcept
 
 template <typename T>
 void BinaryTree<T>::preorder(
-	const Node* node, const std::function<void(const T&)>& f) const noexcept
+	const Node* const node,
+	const std::function<void(const T&)>& f) const noexcept
 {
 	if (!node)
 		return;
@@ -270,7 +319,8 @@ BinaryTree<T>::postorder(const std::function<void(const T&)>& f) const noexcept
 
 template <typename T>
 void BinaryTree<T>::postorder(
-	const Node* node, const std::function<void(const T&)>& f) const noexcept
+	const Node* const node,
+	const std::function<void(const T&)>& f) const noexcept
 {
 	if (!node)
 		return;
@@ -282,10 +332,10 @@ void BinaryTree<T>::postorder(
 template <typename T>
 const T& BinaryTree<T>::minimum() const
 {
-	if (!root)
+	if (!root.getPointer())
 		throw std::out_of_range("Drzewo puste");
 
-	auto tmp{root};
+	auto tmp{root.getPointer()};
 
 	while (tmp->leftChild())
 		tmp = tmp->leftChild();
@@ -296,10 +346,10 @@ const T& BinaryTree<T>::minimum() const
 template <typename T>
 const T& BinaryTree<T>::maximum() const
 {
-	if (!root)
+	if (!root.getPointer())
 		throw std::out_of_range("Drzewo puste");
 
-	auto tmp{root};
+	auto tmp{root.getPointer()};
 
 	while (tmp->rightChild())
 		tmp = tmp->rightChild();
@@ -320,21 +370,67 @@ inline unsigned BinaryTree<T>::depth() const noexcept
 }
 
 template <typename T>
-void BinaryTree<T>::insert(
-	Node*& parent, Node* newNode, unsigned level) noexcept
+void BinaryTree<T>::insertLeft(
+	NodePtr& parent,
+	Node* const newNode,
+	Node* const previous,
+	unsigned level) noexcept
 {
-	if (parent == nullptr) {
+	// if (parent.getPointer() == nullptr) {
+	if (parent.getInt() == Node::THREAD) {
 		++m_size;
 		if (level > m_depth)
 			m_depth = level;
-		parent = newNode;
+		newNode->m_leftChild = parent;
+		newNode->m_rightChild.setPointerAndInt(previous, Node::THREAD);
+		parent.setPointerAndInt(newNode, Node::NO_THREAD);
 		return;
 	}
-	if (parent->value() > newNode->value()) {
-		insert(parent->leftChildRef(), newNode, level + 1);
+	if (parent.getPointer()->value() > newNode->value()) {
+		insertLeft(
+			parent.getPointer()->leftPointer(),
+			newNode,
+			parent.getPointer(),
+			level + 1);
 		return;
 	}
-	insert(parent->rightChildRef(), newNode, level + 1);
+	insertRight(
+		parent.getPointer()->rightPointer(),
+		newNode,
+		parent.getPointer(),
+		level + 1);
+}
+
+template <typename T>
+void BinaryTree<T>::insertRight(
+	NodePtr& parent,
+	Node* const newNode,
+	Node* const next,
+	unsigned level) noexcept
+{
+	// if (parent.getPointer() == nullptr) {
+	if (parent.getInt() == Node::THREAD) {
+		++m_size;
+		if (level > m_depth)
+			m_depth = level;
+		newNode->m_rightChild = parent;
+		newNode->m_leftChild.setPointerAndInt(next, Node::THREAD);
+		parent.setPointerAndInt(newNode, Node::NO_THREAD);
+		return;
+	}
+	if (parent.getPointer()->value() > newNode->value()) {
+		insertLeft(
+			parent.getPointer()->leftPointer(),
+			newNode,
+			parent.getPointer(),
+			level + 1);
+		return;
+	}
+	insertRight(
+		parent.getPointer()->rightPointer(),
+		newNode,
+		parent.getPointer(),
+		level + 1);
 }
 
 ////////////////////////////////////////

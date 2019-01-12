@@ -3,7 +3,11 @@
 #include <stack>
 #include <vector>
 
+#include "PointerIntPair.h"
 #include "binaryTree.hpp"
+
+using Node = BinaryTree<int>::Node;
+using NodePtr = llvm::PointerIntPair<Node*, 1, bool>;
 
 void add_helper(BinaryTree<int>& tree, int number, int offset)
 {
@@ -32,12 +36,13 @@ int main(int, char**)
 	tree.prettyPrint();
 
 	{
-		using Node = BinaryTree<int>::Node;
-
-		Node* root = *reinterpret_cast<Node**>(&tree);
+		std::cout << "Stack: " << std::endl;
+		// cast: &tree -> NodePtr*
+		// getPointer: NodePtr* -> Node*
+		Node* const root = (reinterpret_cast<NodePtr*>(&tree)->getPointer());
 		std::stack<Node*, std::vector<Node*>> stack;
-		auto current{root};
-		while (current || !stack.empty()) {
+		for (auto current{root}; current || !stack.empty();
+			 current = current->rightChild()) {
 			while (current) {
 				stack.push(current);
 				current = current->leftChild();
@@ -46,10 +51,32 @@ int main(int, char**)
 			current = stack.top();
 			stack.pop();
 
-			std::cout << current->value() << std::endl;
-
-			current = current->rightChild();
+			// std::cout << current->value() << std::endl;
+			std::cout << current->value() << " ";
 		}
+		std::cout << std::endl;
+	}
+	{
+		std::cout << "tree.inorder(): " << std::endl;
+		tree.inorder([&](int t) { std::cout << t << " "; });
+		std::cout << std::endl;
+	}
+	{
+		std::cout << "Node.next(): " << std::endl;
+		// cast: &tree -> NodePtr*
+		// getPointer: NodePtr* -> Node*
+		Node* const root = (reinterpret_cast<NodePtr*>(&tree)->getPointer());
+		auto current{root};
+		// go to min
+		while (current->leftChild()) {
+			current = current->leftChild();
+		}
+		// traverse
+		while (current) {
+			std::cout << current->value() << " ";
+			current = current->next();
+		}
+		std::cout << std::endl;
 	}
 
 	return EXIT_SUCCESS;
