@@ -18,9 +18,9 @@ public:
 	inline bool full();
 
 private:
-	std::size_t m_head {0}, m_tail {0};
-	bool m_full {false};
-	T m_vector[N] {0};
+	std::size_t m_head{0}, m_tail{0};
+	bool m_full{false};
+	T m_vector[N]{0};
 };
 
 template <typename T, std::size_t N>

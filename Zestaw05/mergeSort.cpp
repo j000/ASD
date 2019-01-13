@@ -70,7 +70,8 @@ public:
 		return cmp(lhs, rhs) >= 0;
 	}
 
-	friend inline std::ostream& operator<<(std::ostream& os, const Counter& c) // OK
+	friend inline std::ostream&
+	operator<<(std::ostream& os, const Counter& c) // OK
 	{
 		return os << c.store;
 	}

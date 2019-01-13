@@ -4,7 +4,9 @@
 unsigned get_random(unsigned x)
 {
 	thread_local static std::mt19937 generator{std::random_device{}()};
-	/* do not copy! */ thread_local static std::uniform_int_distribution<decltype(x)> distribution{0, x};
+	/* do not copy! */ thread_local static std::uniform_int_distribution<
+		decltype(x)>
+		distribution{0, x};
 	return distribution(generator);
 }
 

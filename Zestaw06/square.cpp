@@ -133,7 +133,9 @@ partition(const Iterator begin, const Iterator _end, const Functor is_smaller)
 
 template <typename Iterator, typename Functor>
 inline void insertion_sort(
-	const Iterator begin, const Iterator end, const Functor is_smaller)
+	const Iterator begin,
+	const Iterator end,
+	const Functor is_smaller)
 {
 	for (auto i = begin + 1; i != end; ++i) {
 		const auto value = *i;

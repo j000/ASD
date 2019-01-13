@@ -109,7 +109,9 @@ T Heap<T>::pop()
 
 template <typename T>
 size_type Heap<T>::get_largest(
-	const T arr[], size_type arr_size, size_type parent) noexcept
+	const T arr[],
+	size_type arr_size,
+	size_type parent) noexcept
 {
 	size_type largest = parent;
 	if (first_child(parent) < arr_size

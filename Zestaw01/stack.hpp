@@ -18,8 +18,8 @@ public:
 	bool empty();
 
 private:
-	std::size_t m_empty {0};
-	T m_vector[N] {};
+	std::size_t m_empty{0};
+	T m_vector[N]{};
 	// std::array<T, N> m_vector;
 };
 

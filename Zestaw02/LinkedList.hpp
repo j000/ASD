@@ -32,8 +32,12 @@ private:
 		Node* next{};
 
 		Node() = default;
-		Node(const T& copy) : value{copy} {}
-		Node(T&& move) : value{std::forward<T>(move)} {}
+		Node(const T& copy) : value{copy}
+		{
+		}
+		Node(T&& move) : value{std::forward<T>(move)}
+		{
+		}
 	};
 
 	Node* m_head{};

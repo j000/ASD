@@ -13,13 +13,8 @@ constexpr auto array_of(T&&... t) -> std::array<V, sizeof...(T)>
 	return {{std::forward<T>(t)...}};
 }
 
-static constexpr auto counts = array_of<std::size_t>(
-	0u,
-	10'000u,
-	20'000u,
-	40'000u,
-	80'000u,
-	160'000u);
+static constexpr auto counts
+	= array_of<std::size_t>(0u, 10'000u, 20'000u, 40'000u, 80'000u, 160'000u);
 static constexpr unsigned MAX{counts.back() * 1000};
 
 unsigned get_random()
