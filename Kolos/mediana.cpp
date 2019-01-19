@@ -15,7 +15,7 @@ constexpr unsigned char shift_bits = 2;
 ////////////////////////////////////////
 
 template <typename T1, typename T2>
-inline T1 reinterpret(const T2& val)
+static inline T1 reinterpret(const T2& val)
 {
 	static_assert(sizeof(T1) == sizeof(T2), "type sizes mismatch");
 	static_assert(
@@ -74,7 +74,7 @@ void sort2(
 	// std::vector<double> buckets[buckets_count];
 	std::vector<double>* buckets = new std::vector<double>[buckets_count];
 	for (auto i = 0u; i < buckets_count; ++i) {
-		buckets[i].reserve(size / buckets_count);
+		buckets[i].reserve(size / buckets_count / 2);
 	}
 
 	const uint64_t shift_mask = (1u << shift_bits) - 1u;
