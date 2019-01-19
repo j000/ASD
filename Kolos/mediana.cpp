@@ -72,7 +72,7 @@ void sort2(
 
 	/* warning: ISO C++ forbids variable length array */
 	// std::vector<double> buckets[buckets_count];
-	std::vector<double>* buckets = new std::vector<double>[buckets_count];
+	auto buckets = std::make_unique<std::vector<double>[]>(buckets_count);
 	for (auto i = 0u; i < buckets_count; ++i) {
 		buckets[i].reserve(size / buckets_count / 2);
 	}
