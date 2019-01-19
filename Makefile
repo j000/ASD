@@ -54,8 +54,12 @@ endif
 
 ####################
 # wszystko zależy od Makefile
-$(FILES:.cpp=.o): Makefile zestaw.mk
-$(HELPERS:.cpp=.o): Makefile zestaw.mk
+$(FILES:.cpp=.o): Makefile
+$(HELPERS:.cpp=.o): Makefile
+ifneq (,$(wildcard zestaw.mk))
+$(FILES:.cpp=.o): zestaw.mk
+$(HELPERS:.cpp=.o): zestaw.mk
+endif
 
 # make może automatycznie usunąć te pliki
 .INTERMEDIATE: $(HELPERS:.cpp=.o) $(FILES:.cpp=.o)
