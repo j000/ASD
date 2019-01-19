@@ -134,27 +134,15 @@ int main(int argc, char** argv)
 	std::vector<double> input(n);
 	for (auto& d : input) {
 		d = get_random();
-		std::cout << d << std::endl;
-		auto tmp = d;
-		flip(tmp);
-		unflip(tmp);
-		if (tmp != d) {
-			std::cout << " *** " << tmp << " *** " << std::endl;
-		}
 	}
-	std::cout << std::endl;
 
 	sort(input.data(), n);
 
-	for (const auto& d : input) {
-		std::cout << d << std::endl;
-	}
 	if (!is_sorted(input.begin(), input.end())) {
 		std::cout << " *** NOT SORTED *** " << std::endl;
 		return 1;
 	}
 
-	std::cout << std::endl;
 	if (n % 2)
 		std::cout << input[n / 2] << std::endl;
 	else
